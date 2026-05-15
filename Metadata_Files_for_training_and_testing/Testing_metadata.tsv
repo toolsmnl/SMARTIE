@@ -1,0 +1,9 @@
+name	expt_files	ctrl_files	targets_file
+Ataxin-2 gDNA	"Experiment_Files/Atx2_Exp_1.txt,Experiment_Files/Atx2_Exp_2.txt"	"Control_Files/Atx2_Ctrl_1.txt,Control_Files/Atx2_Ctrl_2.txt"	Analysed_Target_Files/Ataxin-2_EM.csv
+Hrp48 HyperTRIBE	"Experiment_Files/Hrp48_HT_1_Exp.txt,Experiment_Files/Hrp48_HT_2_Exp.txt"	"Control_Files/Hrp48_HT_Ctrl_1.txt,Control_Files/Hrp48_HT_Ctrl_2.txt"	Analysed_Target_Files/Hrp48_HyperTRIBE_Targets.csv
+Thor	"Experiment_Files/Thor_Exp_1.txt,Experiment_Files/Thor_Exp_2.txt"	"Control_Files/Thor_Ctrl_1.txt,Control_Files/Thor_Ctrl_2.txt"	Analysed_Target_Files/Thor_Targets.csv
+TDP-43 ADAR	"Experiment_Files/TDP43_Exp_ADAR_1.txt,Experiment_Files/TDP43_Exp_ADAR_2.txt"	"Control_Files/TDP43_Ctrl_ADAR_1.txt,Control_Files/TDP43_Ctrl_ADAR_2.txt"	Analysed_Target_Files/TDP-43_ADAR_Targets.csv
+GPATCH	"Experiment_Files/GPATCH1_tp1.txt,Experiment_Files/GPATCH1_tp2.txt,Experiment_Files/GPATCH2_tp1.txt,Experiment_Files/GPATCH2_tp2.txt"	"Control_Files/Ctrl_GPnSUG_1_tp2.txt,Control_Files/Ctrl_GPnSUG_1_tp2.txt,Control_Files/Ctrl_GPnSUG_2_tp2.txt,Control_Files/Ctrl_GPnSUG_2_tp2.txt"	Analysed_Target_Files/GPATCH_Targets.csv
+Fmr_HyperTRIBE	"Experiment_Files/FMRP_HyperTRIBE_1.txt,Experiment_Files/FMRP_HyperTRIBE_2.txt"	"Control_Files/Hrp48_HT_Ctrl_1.txt,Control_Files/Hrp48_HT_Ctrl_2.txt"	Analysed_Target_Files/FMRP_HyperTRIBE_Targets.csv
+NonA_S2	"Experiment_Files/NonA_S2_1.txt,Experiment_Files/NonA_S2_2.txt"	"Control_Files/Hrp48_T_Ctrl_1_.txt,Control_Files/Hrp48_T_Ctrl_2_.txt"	Analysed_Target_Files/NonA_S2_Targets.csv
+TDP43 APOBEC	"Experiment_Files/TDP43_Exp_APO_1.txt,Experiment_Files/TDP43_Exp_APO_2.txt"	"Control_Files/TDP43_Ctrl_APO1.txt,Control_Files/TDP43_Ctrl_APO2.txt"	Analysed_Target_Files/TDP-43_APOBEC_Targets.csv

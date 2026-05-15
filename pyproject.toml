@@ -1,0 +1,118 @@
+[build-system]
+requires      = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# ---------------------------------------------------------------------------
+# Package metadata
+# ---------------------------------------------------------------------------
+[project]
+name            = "smartie"
+version         = "0.1.0"
+description     = "Random Forest predictor for RBP target identification from TRIBE / STAMP A-to-G editing data."
+readme          = "README.md"
+requires-python = ">=3.10"
+license         = { file = "LICENSE" }
+authors         = [
+    { name = "<Your Name>", email = "<you@example.com>" },
+]
+keywords = [
+    "bioinformatics", "RNA editing", "RBP", "TRIBE", "STAMP",
+    "random forest", "target prediction",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+
+# ---------------------------------------------------------------------------
+# Runtime dependencies
+#   Versions are lower bounds; we don't pin upper bounds so the package
+#   continues to install on future stable releases of numpy/pandas/sklearn.
+# ---------------------------------------------------------------------------
+dependencies = [
+    "numpy>=1.23",
+    "pandas>=2.0",
+    "scipy>=1.10",
+    "scikit-learn>=1.3",
+    "matplotlib>=3.7",
+    "seaborn>=0.12",
+    "joblib>=1.3",
+    "tqdm>=4.65",
+    "pyarrow>=12.0",         # for the brute-force results_index.parquet
+]
+
+[project.optional-dependencies]
+# Faster / GPU-capable boosting backends — entirely optional.
+boost = [
+    "xgboost>=2.0",
+    "lightgbm>=4.0",
+]
+# Development & testing tools.
+dev = [
+    "pytest>=7.4",
+    "ruff>=0.1",
+    "mypy>=1.5",
+]
+
+# ---------------------------------------------------------------------------
+# CLI entry points
+#   These are what makes the wet-lab-biologist install pleasant: after
+#   `pip install`, `smartie-test`, `smartie-train`, etc. work from anywhere.
+# ---------------------------------------------------------------------------
+[project.scripts]
+# Core prediction & training workflow
+smartie-test  = "smartie.cross_dataset_heatmap:main"
+smartie-train = "smartie.train_model:main"
+
+# Brute-force feature search workflow
+smartie-brute               = "smartie.brute_force.multitrain:main"
+smartie-brute-query         = "smartie.brute_force.query:main"
+smartie-brute-plot-kmax-best     = "smartie.brute_force.plots.kmax_best_combos:main"
+smartie-brute-plot-feature-rank  = "smartie.brute_force.plots.feature_ranking_all_kmax:main"
+smartie-brute-plot-assembled     = "smartie.brute_force.plots.assembled_figure:main"
+
+[project.urls]
+Homepage      = "https://github.com/<your-username>/SMARTIE"
+Repository    = "https://github.com/<your-username>/SMARTIE"
+"Bug Tracker" = "https://github.com/<your-username>/SMARTIE/issues"
+
+# ---------------------------------------------------------------------------
+# Setuptools-specific configuration
+# ---------------------------------------------------------------------------
+[tool.setuptools.packages.find]
+where    = ["src"]
+include  = ["smartie*"]
+exclude  = ["tests*", "examples*"]
+
+# Bundle SMARTIE.pkl + its model_config.json with the wheel.
+# This is what makes `smartie-test --metadata my_data.tsv` work with no
+# `--model` argument: the entry point auto-discovers the bundled file.
+[tool.setuptools.package-data]
+smartie = [
+    "data/SMARTIE.pkl",
+    "data/model_config.json",
+]
+
+# ---------------------------------------------------------------------------
+# Ruff (lint + format)
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length    = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]   # line length handled by formatter
+
+# ---------------------------------------------------------------------------
+# Pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts   = "-v --tb=short"

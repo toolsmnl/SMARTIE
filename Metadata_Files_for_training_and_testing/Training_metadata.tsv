@@ -1,0 +1,2 @@
+name	expt_files	ctrl_files	targets_file
+NonA_Brain	"Experiment_Files/NonA_Brain_1.txt,Experiment_Files/NonA_Brain_2.txt,Experiment_Files/NonA_Brain_3.txt"	"Control_Files/NonA_Ctrl_Brain_1.txt,Control_Files/NonA_Ctrl_Brain_2.txt"	Analysed_Target_Files/NonA_Brain_Targets.csv
