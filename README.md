@@ -30,7 +30,7 @@ SMARTIE is a pure-Python package. It works on Linux, macOS, and Windows (via WSL
 ### The one-line install (recommended for everyone)
 
 ```bash
-pip install git+https://github.com/<your-username>/SMARTIE.git
+pip install git+https://github.com/toolsmnl/SMARTIE.git
 ```
 
 That's it. The pretrained model is bundled with the package, so you can start predicting right after the install finishes.
@@ -47,7 +47,7 @@ brew install pipx
 sudo apt install pipx
 
 # Then:
-pipx install git+https://github.com/<your-username>/SMARTIE.git
+pipx install git+https://github.com/toolsmnl/SMARTIE.git
 ```
 
 After this, `smartie-test`, `smartie-train`, and the other commands work from any terminal, in any directory, with no `conda activate` or `source venv/bin/activate` needed.
@@ -57,13 +57,13 @@ After this, `smartie-test`, `smartie-train`, and the other commands work from an
 ```bash
 conda create -n smartie python=3.11 pip
 conda activate smartie
-pip install git+https://github.com/<your-username>/SMARTIE.git
+pip install git+https://github.com/toolsmnl/SMARTIE.git
 ```
 
 ### Development install (if you cloned the repo)
 
 ```bash
-git clone https://github.com/<your-username>/SMARTIE.git
+git clone https://github.com/toolsmnl/SMARTIE.git
 cd SMARTIE
 pip install -e .
 ```
@@ -508,7 +508,7 @@ If SMARTIE is useful in your work, please cite *[paper or preprint placeholder]*
 
 ## License
 
-[Pick one — MIT / BSD-3-Clause / Apache-2.0 are all reasonable for biological tools — and put the full license text in `LICENSE`.]
+SMARTIE is released under the [MIT License](LICENSE).
 
 ## Contact
 

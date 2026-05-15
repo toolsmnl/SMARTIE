@@ -13,11 +13,19 @@ readme          = "README.md"
 requires-python = ">=3.10"
 license         = { file = "LICENSE" }
 authors         = [
-    { name = "<Your Name>", email = "<you@example.com>" },
+    { name = "Omkar Koppaka" },
+    { name = "Utham Kumar" },
+    { name = "Rishikesh Yadav" },
+    { name = "Baskar Bakthavachalu" },
+    
+]
+maintainers = [
+    {name = "Omkar Koppaka", github = "https://github.com/toolsmnl"},
+    {name = "Utham Kumar", github = "https://github.com/DarkOxygen123"}
 ]
 keywords = [
     "bioinformatics", "RNA editing", "RBP", "TRIBE", "STAMP",
-    "random forest", "target prediction",
+    "xgboost", "machine learning",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -67,7 +75,7 @@ dev = [
 # ---------------------------------------------------------------------------
 [project.scripts]
 # Core prediction & training workflow
-smartie-test  = "smartie.cross_dataset_heatmap:main"
+smartie-test  = "smartie.SMARTIE_predict:main"
 smartie-train = "smartie.train_model:main"
 
 # Brute-force feature search workflow
@@ -78,9 +86,9 @@ smartie-brute-plot-feature-rank  = "smartie.brute_force.plots.feature_ranking_al
 smartie-brute-plot-assembled     = "smartie.brute_force.plots.assembled_figure:main"
 
 [project.urls]
-Homepage      = "https://github.com/<your-username>/SMARTIE"
-Repository    = "https://github.com/<your-username>/SMARTIE"
-"Bug Tracker" = "https://github.com/<your-username>/SMARTIE/issues"
+Homepage      = "https://github.com/toolsmnl/SMARTIE"
+Repository    = "https://github.com/toolsmnl/SMARTIE"
+"Bug Tracker" = "https://github.com/toolsmnl/SMARTIE/issues"
 
 # ---------------------------------------------------------------------------
 # Setuptools-specific configuration
