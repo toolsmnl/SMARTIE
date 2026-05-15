@@ -2,9 +2,9 @@
 
 **S**ystematic **M**achine-learning **A**pproach for **R**BP **T**arget **I**dentification from **E**diting data.
 
-SMARTIE is a Random Forest classifier that ranks genes as likely targets of an RNA-binding protein (RBP) from TRIBE / STAMP A-to-G editing data. The package ships a pretrained model (`SMARTIE.pkl`) so you can predict on your own data immediately, without training anything.
+SMARTIE is a machine-learning classifier based on XGBoost algorithm that ranks genes as likely targets of an RNA-binding protein (RBP) from TRIBE / STAMP data. The package ships a pretrained model (`SMARTIE.pkl`) that can predict RNA targets from TRIBE / STAMP data from any sample source.
 
-If you have editing-site files from an RBP-ADAR / RBP-APOBEC fusion experiment and a control, you can install SMARTIE and get a ranked list of candidate targets in one command. Everything else in this README is optional.
+The nuser needs to identify editing-sites from experiment and a control samples using respective pipelines which when provided to SMARTIE will provide a ranked list of candidate targets. 
 
 ---
 
@@ -25,7 +25,7 @@ If you have editing-site files from an RBP-ADAR / RBP-APOBEC fusion experiment a
 
 ## Installation
 
-SMARTIE is a pure-Python package. It works on Linux, macOS, and Windows (via WSL or native), with Python 3.10 or newer.
+SMARTIE is a Python package. It works on Linux, macOS, and Windows (via WSL or native), with Python 3.10 or newer.
 
 ### The one-line install (recommended for everyone)
 
