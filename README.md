@@ -33,7 +33,7 @@ SMARTIE is a Python package. It works on Linux, macOS, and Windows (via WSL or n
 pip install git+https://github.com/toolsmnl/SMARTIE.git
 ```
 
-That's it. The pretrained model is bundled with the package, so you can start predicting right after the install finishes.
+The pretrained model is bundled with the package, so you can start predicting right after the install finishes.
 
 ### If you don't already have Python set up
 
