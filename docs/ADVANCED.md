@@ -1,4 +1,4 @@
-# SMARTIE — Advanced usage
+# SMARTIE: Advanced usage
 
 This document covers advanced functionality intended for users who wish to go beyond the bundled pretrained model: training a custom model, performing exhaustive feature selection, and resolving common issues.
 
@@ -61,16 +61,16 @@ This trains one model per row in the metadata file, saves each as `Trained_<labe
 
 ### 1.3 Training options
 
-| Flag                  | Default | Description                                                                                        |
-| --------------------- | ------- | -------------------------------------------------------------------------------------------------- |
-| `--min-reads`         | 20      | Site-level coverage filter. Should be kept consistent between training and testing.                |
-| `--min-total-reads`   | 0       | Gene-level filter: discards genes with average total reads below this value in the experiment replicates. |
-| `--min-fold-change`   | 0.0     | Gene-level filter: discards genes with `mean_cum_expt% / mean_cum_ctrl%` below this value.         |
-| `--models`            | all     | Classifiers to fit. Defaults to all ten. The Random Forest is always the deliverable; the others serve as baselines. |
-| `--drop-models`       | none    | Removes specified models from the selection, e.g. `--drop-models linreg svm`.                      |
-| `--feature-weights`   | none    | Biases the model toward particular features, e.g. `--feature-weights fold_change:3 site_enrichment:0.5`. |
-| `--test-fraction`     | 0.20    | Fraction of the data held out as a stratified test split.                                          |
-| `--test-bootstrap`    | 0       | Number of bootstrap iterations for confidence intervals on test metrics.                           |
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--min-reads` | 20  | Site-level coverage filter. Should be kept consistent between training and testing. |
+| `--min-total-reads` | 0   | Gene-level filter: discards genes with average total reads below this value in the experiment replicates. |
+| `--min-fold-change` | 0.0 | Gene-level filter: discards genes with `mean_cum_expt% / mean_cum_ctrl%` below this value. |
+| `--models` | all | Classifiers to fit. Defaults to all ten. The Random Forest is always the deliverable; the others serve as baselines. |
+| `--drop-models` | none | Removes specified models from the selection, e.g. `--drop-models linreg svm`. |
+| `--feature-weights` | none | Biases the model toward particular features, e.g. `--feature-weights fold_change:3 site_enrichment:0.5`. |
+| `--test-fraction` | 0.20 | Fraction of the data held out as a stratified test split. |
+| `--test-bootstrap` | 0   | Number of bootstrap iterations for confidence intervals on test metrics. |
 
 The complete list of options is available via `smartie-train --help`.
 
@@ -101,7 +101,7 @@ Multi-model runs generate additional comparison figures, including `multi_model_
 
 ## 2. Brute-force feature selection
 
-SMARTIE includes an exhaustive feature-combination search, `smartie-brute`, for identifying the smallest or best-performing subset of features for a given dataset. This procedure is computationally intensive — typically requiring an overnight run on a workstation — and is therefore provided separately from standard training.
+SMARTIE includes an exhaustive feature-combination search, `smartie-brute`, for identifying the smallest or best-performing subset of features for a given dataset. This procedure is computationally intensive, typically requiring an overnight run on a workstation, and is therefore provided separately from standard training.
 
 ### 2.1 Method
 
@@ -146,11 +146,11 @@ smartie-brute-query --index results/brute_force/results_index.parquet --list-fea
 
 Three commands convert the search output into figures:
 
-| Command                           | Output                                                                                                          |
-| ---------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `smartie-brute-plot-kmax-best`     | For each value of *k*, selects the top-N combinations by average test precision and draws a precision heatmap per combination. |
-| `smartie-brute-plot-feature-rank`  | A rank-weighted feature-importance bar chart aggregated across all values of *k*.                               |
-| `smartie-brute-plot-assembled`     | A publication-ready four-panel figure combining the precision heatmap, per-*k* distributions, feature ranking, and depth trends. |
+| Command | Output |
+| --- | --- |
+| `smartie-brute-plot-kmax-best` | For each value of *k*, selects the top-N combinations by average test precision and draws a precision heatmap per combination. |
+| `smartie-brute-plot-feature-rank` | A rank-weighted feature-importance bar chart aggregated across all values of *k*. |
+| `smartie-brute-plot-assembled` | A publication-ready four-panel figure combining the precision heatmap, per-*k* distributions, feature ranking, and depth trends. |
 
 A representative post-processing pipeline:
 
@@ -195,7 +195,7 @@ This occurs when scripts are run directly from a source checkout located in a di
 Predictions can still be generated. Provide a `targets_file` containing a single placeholder entry; `predictions.tsv` with the ranked genes is still produced, although precision plots for that dataset are omitted.
 
 **Predictions are identical for every gene.**
-This almost always indicates a mismatch between the feature schema of the model and that of the data. Confirm that `model_config.json` — located alongside the `.pkl` file — was loaded. If a `.pkl` file is copied without its accompanying JSON, the test command reverts to default settings, which may differ.
+This almost always indicates a mismatch between the feature schema of the model and that of the data. Confirm that `model_config.json` (located alongside the `.pkl` file) was loaded. If a `.pkl` file is copied without its accompanying JSON, the test command reverts to default settings, which may differ.
 
 **Memory usage is excessive during a brute-force run.**
 Reduce `--workers` and/or `--rf-threads`. The default values are appropriate for a typical 16-core workstation; both should be halved on systems with fewer resources.
