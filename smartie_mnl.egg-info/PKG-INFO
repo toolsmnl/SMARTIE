@@ -1,0 +1,467 @@
+Metadata-Version: 2.4
+Name: smartie-mnl
+Version: 1.0.0
+Summary: SMARTIE: Machine-learning pipeline for predicting RNA-binding protein targets from TRIBE/STAMP editing data — Molecular Neuroscience Lab
+License: MIT
+Keywords: TRIBE,STAMP,RNA-binding proteins,A-to-I editing,bioinformatics,machine learning
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Topic :: Scientific/Engineering :: Bio-Informatics
+Classifier: Intended Audience :: Science/Research
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy>=1.24
+Requires-Dist: pandas>=2.0
+Requires-Dist: scipy>=1.10
+Requires-Dist: scikit-learn>=1.3
+Requires-Dist: matplotlib>=3.7
+Requires-Dist: seaborn>=0.12
+Requires-Dist: streamlit>=1.32
+Provides-Extra: full
+Requires-Dist: xgboost>=2.0; extra == "full"
+Requires-Dist: lightgbm>=4.0; extra == "full"
+Dynamic: license-file
+
+# SMARTIE
+**Molecular Neuroscience Lab**
+
+**Machine-learning pipeline for predicting RNA-binding protein (RBP) targets from TRIBE and STAMP editing data.**
+
+TRIBE (Targets of RNA-Binding Proteins Identified By Editing) and STAMP (Surveying Targets by APOBEC-Mediated Profiling) fuse an RBP to a base-editing enzyme (ADAR or APOBEC). Sites edited above background identify where the RBP binds. `smartie` automates the full analysis: loading raw editing files, engineering 18 biologically motivated features, training a Random Forest classifier, and generating publication-quality plots.
+
+---
+
+## Table of contents
+
+1. [Installation](#installation)
+2. [Web interface — no command line needed](#web-interface)
+3. [Quick-start: command line](#quick-start-testing-the-pre-trained-model)
+4. [Input file format](#input-file-format)
+5. [Running predictions on your own data](#running-predictions-on-your-own-data)
+6. [Output files and plots explained](#output-files-and-plots-explained)
+7. [Cross-dataset testing](#cross-dataset-testing)
+8. [Training your own model](#training-your-own-model)
+9. [Command-line reference](#command-line-reference)
+10. [Troubleshooting](#troubleshooting)
+---
+
+## Web interface
+
+**Not comfortable with the command line? Start here.**
+
+`smartie` includes a full point-and-click web interface built with Streamlit.
+After installing the package you can launch it with a single command — a browser
+window opens automatically and you never need to touch the terminal again.
+
+### Launch the web interface
+
+**Mac / Linux:**
+```bash
+SMARTIE
+```
+
+**Windows** (PowerShell or Command Prompt):
+```bash
+SMARTIE
+```
+
+If you see a *"not recognized"* error on Windows, use this fallback instead:
+```bash
+python -m smartie_mnl.app.launcher
+```
+
+The app opens at **http://localhost:8501** in your default browser.
+
+### What the web interface includes
+
+| Page | What you can do |
+|---|---|
+| 🏠 **Home** | Overview, input format guide, and quick orientation |
+| 🔬 **Predict Targets** | Upload your editing files + a trained model → ranked gene list + plots |
+| 🎓 **Train Your Model** | Upload data + known targets → train a custom model, download `rf_model.pkl` |
+| 📊 **Cross-Dataset Testing** | Test a model on multiple datasets → precision heatmaps, ROC/PR curves |
+
+### Step-by-step for a wet-lab biologist
+
+1. **Install** (one time only):
+   ```bash
+   pip install smartie-mnl
+   ```
+2. **Launch** the app:
+   ```bash
+   SMARTIE
+   ```
+3. In your browser, go to **🎓 Train Your Model**:
+   - Drag and drop your experiment `.txt` files
+   - Drag and drop your control `.txt` files
+   - Drag and drop your known-targets file
+   - Adjust the sliders if needed (defaults are fine to start)
+   - Click **▶️ Train Model**
+   - Download `rf_model.pkl` when training finishes
+4. Go to **🔬 Predict Targets** to apply the trained model to new experiments.
+5. All results (tables, plots, model file) can be downloaded as a ZIP from the app.
+
+> **Custom port:** if port 8501 is taken, use `SMARTIE --port 8502`.  
+> **Headless server:** use `SMARTIE --no-browser` to suppress the browser pop-up.
+
+
+
+---
+
+## Installation
+
+### What you need first
+
+You need **Python 3.10 or newer**. If you are not sure whether Python is installed, open a terminal (Mac: *Applications → Terminal*; Windows: search for *Command Prompt* or *PowerShell*) and type:
+
+```bash
+python --version
+```
+
+If Python is not installed, download it from [python.org](https://www.python.org/downloads/) — choose the latest 3.x release and follow the installer. No other software is required before you start.
+
+---
+
+### Install smartie
+
+In your terminal, run the single command below. It downloads and installs `smartie` and all its dependencies automatically:
+
+```bash
+pip install smartie-mnl
+```
+
+That's it. You should see a message ending with `Successfully installed smartie-mnl`.
+
+> **Optional extras** — if you want to also train XGBoost or LightGBM models (in addition to Random Forest), install:
+> ```bash
+> pip install "smartie-mnl[full]"
+> ```
+
+### Verify the installation
+
+```bash
+smartie-train --help
+```
+
+You should see the help text for the training command. If you see a `command not found` error on Mac/Linux, try `python -m smartie_mnl.train_model --help`.
+
+---
+
+## Quick-start: testing the pre-trained model
+
+The fastest way to see `smartie` in action is to run the pre-trained Ataxin-2 model on a test dataset. Everything below uses only example files bundled with the package.
+
+```bash
+# 1. Download the example data folder (contains editing files + known targets)
+#    (replace this with the actual path to your downloaded data)
+smartie-train \
+    --expt  data/example/Atx_1.txt data/example/Atx_2.txt \
+    --ctrl  data/example/Adar_1.txt data/example/Adar_2.txt \
+    --targets data/example/known_targets.txt \
+    --outdir  outputs/quickstart
+```
+
+Training takes roughly 30–60 seconds on a laptop. When it finishes, open `outputs/quickstart/` in your file browser — you will find plots and ranked prediction files (see [Output files and plots explained](#output-files-and-plots-explained)).
+
+---
+
+## Input file format
+
+`smartie` reads standard **tab-separated** TRIBE/STAMP output files. Each row is one editing site. The required columns are:
+
+| Column | Description |
+|---|---|
+| `Chr` | Chromosome (e.g. `chr3R`) |
+| `Edit_coord` | Genomic coordinate of the edited site |
+| `Name` | Gene symbol the site falls in |
+| `Type` | Annotation type (e.g. `EXON`, `UTR`, `INTRON`) |
+| `Editbase_count` or `G_count` | Number of edited reads at this site (A-to-G editing) |
+| `T_count` | Number of edited reads at this site (C-to-T editing, STAMP) |
+| `Total_count` | Total read coverage at this site |
+
+Example (first three lines):
+
+```
+Chr     Edit_coord  Name    Type    Editbase_count  Total_count
+chr3R   16204186    Atx2    EXON    45              720
+chr3R   16204250    Atx2    EXON    38              690
+```
+
+> **Replicate naming** — you can have any number of experiment and control replicates. Pass them all with `--expt file1.txt file2.txt ...` and `--ctrl file1.txt file2.txt ...`. There is no hard requirement for exactly two replicates.
+
+---
+
+## Running predictions on your own data
+
+Once you have your editing files, predictions require one command:
+
+```bash
+smartie-train \
+    --expt  Experiment_rep1.txt Experiment_rep2.txt \
+    --ctrl  Control_rep1.txt Control_rep2.txt \
+    --targets known_targets.txt \
+    --outdir  outputs/my_experiment
+```
+
+Key options you may want to change:
+
+| Option | Default | Meaning |
+|---|---|---|
+| `--min-reads` | `20` | Drop sites with fewer than this many total reads. Raises this to remove noisy low-coverage sites. |
+| `--min-edit-pct` | `0` | Drop sites with edit percentage below this value (e.g. `5` = keep only sites with ≥5% editing). |
+| `--editing-type` | `AtoG` | Use `CtoT` for STAMP/APOBEC experiments. |
+| `--outdir` | `outputs/model` | Folder where all results are written. |
+
+For a C-to-T (STAMP) experiment:
+
+```bash
+smartie-train \
+    --expt  APOBEC_rep1.txt APOBEC_rep2.txt \
+    --ctrl  Control_rep1.txt Control_rep2.txt \
+    --targets known_targets.txt \
+    --editing-type CtoT \
+    --outdir outputs/stamp_experiment
+```
+
+---
+
+## Output files and plots explained
+
+After a run, your `--outdir` will contain:
+
+```
+outputs/my_experiment/
+├── predictions.tsv          ← ranked gene list (most likely RBP targets first)
+├── gene_features.tsv        ← the 18 features computed for every gene
+├── feature_importance.tsv   ← which features drove the model
+├── topk_metrics.tsv         ← precision at top-10 / 50 / 100 / 200 genes
+├── model_config.json        ← parameters used (saved for reproducibility)
+├── rf_model.pkl             ← the trained Random Forest model file
+└── plots/
+    ├── roc_curve.pdf/.png            ← ROC curve (area under curve = overall accuracy)
+    ├── precision_recall.pdf/.png     ← Precision–recall curve
+    ├── topk_precision.pdf/.png       ← Bar chart: % known targets in top-K predictions
+    ├── feature_importance.pdf/.png   ← Horizontal bar chart of feature importance
+    ├── score_distribution.pdf/.png   ← Histogram of RF probability scores
+    └── cv_folds.pdf/.png             ← Cross-validation performance across 5 folds
+```
+
+### What each plot tells you
+
+**ROC curve** (`roc_curve.pdf`)
+Shows how well the model separates true targets from non-targets at every possible score threshold. A curve hugging the top-left corner (AUC close to 1.0) means near-perfect discrimination. A diagonal line (AUC = 0.5) means random guessing. Typical results with good TRIBE data: AUC > 0.90.
+
+**Precision–recall curve** (`precision_recall.pdf`)
+More informative than ROC when targets are rare (as is common in RBP experiments). The y-axis (precision) answers "of all genes the model flagged, what fraction are real targets?" The x-axis (recall) answers "of all real targets, what fraction did the model find?". A curve staying high across the x-axis is ideal.
+
+**Top-K precision** (`topk_precision.pdf`)
+The most practically useful plot. It shows, for the top 10, 50, 100, 200, ... genes ranked by the model, what percentage are known targets. For example, "Top-50: 90% precision" means 45 of the top 50 predicted genes are confirmed targets. This directly answers "how many of the model's shortlist can I trust?"
+
+**Feature importance** (`feature_importance.pdf`)
+Horizontal bar chart showing which of the 18 features contributed most to the model's decisions. Features near the top have the most influence. This can indicate whether signal vs control fold-change is dominant, or whether replicate consistency matters more in your data.
+
+**Score distribution** (`score_distribution.pdf`)
+Histogram of the Random Forest probability score for every gene. True targets typically cluster near 1.0 while non-targets cluster near 0. A clear bimodal separation indicates a well-trained model. If everything clusters near 0.5 the model may not have enough training signal.
+
+**Cross-validation folds** (`cv_folds.pdf`)
+Shows model performance across each of the 5 cross-validation splits. Consistent bars across folds indicate the model is stable and not over-fitting to one subset of the training data.
+
+---
+
+## Cross-dataset testing
+
+If you have data from multiple RBP experiments and want to test whether a model trained on one generalises to another:
+
+```bash
+# 1. Create a metadata file (datasets.tsv) — tab-separated:
+#    label       expt_files                           ctrl_files                         targets_file
+#    Ataxin-2    data/Atx_1.txt;data/Atx_2.txt        data/Adar_1.txt;data/Adar_2.txt    targets/atx.txt
+#    Thor        data/Thor_1.txt;data/Thor_2.txt       data/BG_1.txt;data/BG_2.txt        targets/thor.txt
+
+# 2. Test a single trained model across all datasets
+smartie-test \
+    --metadata datasets.tsv \
+    --model    outputs/my_experiment/rf_model.pkl \
+    --outdir   outputs/cross_test
+```
+
+### Cross-dataset plots
+
+In `outputs/cross_test/comparison/` you will find:
+
+| Plot | What it shows |
+|---|---|
+| `precision_heatmap.pdf` | Grid: rows = datasets tested, columns = top-K cutoffs. Cell colour = precision. Instantly shows where the model generalises and where it struggles. |
+| `precision_lineplot.pdf` | Same data as a line plot — easier to compare datasets side by side. |
+| `roc_curves.pdf` | Overlaid ROC curves, one per dataset. |
+| `roc_auc_barchart.pdf` | Bar chart of AUC per dataset — quick summary of cross-dataset performance. |
+| `pr_curves.pdf` | Precision–recall curves per dataset. |
+| `score_distributions.pdf` | Score histograms per dataset. |
+| `feature_value_heatmap.pdf` | Average feature values per dataset — helps diagnose why a model transfers well or poorly. |
+| `gene_rank_overlap.pdf` | Heatmap of Spearman rank correlation between gene rankings across datasets. High correlation means the model ranks genes similarly regardless of dataset. |
+| `summary.tsv` | Table of all metrics (AUC, precision at each K) for every dataset. |
+
+### Leave-one-out cross-dataset testing
+
+To train one model per dataset and test each on all others (leave-one-out), first run batch training:
+
+```bash
+smartie-train \
+    --metadata datasets.tsv \
+    --outdir   outputs/batch_training
+```
+
+Then run the cross-test with auto-discovery:
+
+```bash
+smartie-test \
+    --metadata datasets.tsv \
+    --loo-dir  outputs/batch_training \
+    --outdir   outputs/cross_test_loo
+```
+
+This generates additional multi-model comparison plots including a `multi_model_precision_heatmap.pdf` and a `multi_model_feature_importance_heatmap.pdf`.
+
+---
+
+## Training your own model
+
+`smartie` is designed to be retrained on any TRIBE or STAMP dataset where you have a list of known targets. This lets you build a model tailored to your specific RBP, cell line, or sequencing protocol.
+
+### What you need
+
+1. **Experiment files** — editing output files from your RBP-ADAR (or RBP-APOBEC) fusion experiment, one file per biological replicate. At least two replicates are recommended.
+2. **Control files** — editing output files from the ADAR-only (or APOBEC-only) control, one file per replicate.
+3. **Known targets file** — a text file (one gene per line) or CSV with a `Name` column listing genes you know the RBP binds. These can come from published CLIP-seq, PAR-CLIP, eCLIP, or prior biochemical evidence.
+
+### Training command
+
+```bash
+smartie-train \
+    --expt    RBP_Expt_1.txt RBP_Expt_2.txt \
+    --ctrl    Control_1.txt Control_2.txt \
+    --targets known_RBP_targets.txt \
+    --outdir  outputs/my_RBP_model
+```
+
+The model trains in under a minute on a standard laptop for typical dataset sizes (tens of thousands of editing sites).
+
+### Adjusting training parameters
+
+| Option | Default | When to change |
+|---|---|---|
+| `--min-reads 20` | 20 | Increase (e.g. `50`) for noisier datasets; decrease only if coverage is very low genome-wide. |
+| `--min-edit-pct 5` | 0 | Set to `5` to filter out near-zero editing events that are likely sequencing noise. |
+| `--min-fold-change 1.5` | 1.0 | Only include genes with at least this fold-change over control in the feature matrix. |
+| `--min-total-reads 100` | 50 | Gene-level minimum — excludes very lowly expressed genes from model training. |
+| `--test-fraction 0.2` | 0.2 | Hold back 20% of genes as a true test set (never seen during training). |
+| `--test-bootstrap 200` | 0 | Bootstrap the held-out test set 200 times and report mean + 95% CI for all metrics. |
+
+### Using your trained model to predict new data
+
+Once trained, your model file (`rf_model.pkl`) can be applied to any new editing experiment without retraining:
+
+```bash
+smartie-test \
+    --metadata new_datasets.tsv \
+    --model    outputs/my_RBP_model/rf_model.pkl \
+    --outdir   outputs/new_predictions
+```
+
+### Batch training across multiple datasets
+
+If you have multiple RBPs or experimental conditions, train them all at once with a metadata TSV:
+
+```bash
+smartie-train \
+    --metadata all_datasets.tsv \
+    --outdir   outputs/all_models
+```
+
+Each dataset gets its own subdirectory (`outputs/all_models/Trained_<label>/`) containing a separate trained model and all plots.
+
+---
+
+## Command-line reference
+
+### `smartie-train`
+
+```
+smartie-train --expt FILE [FILE ...] --ctrl FILE [FILE ...] --targets FILE [options]
+smartie-train --metadata FILE [options]
+
+Required (single dataset mode):
+  --expt FILE [FILE ...]    Experiment replicate files
+  --ctrl FILE [FILE ...]    Control replicate files
+  --targets FILE            Known target genes (text or CSV)
+
+Required (batch mode):
+  --metadata FILE           TSV file describing multiple datasets
+
+Common options:
+  --outdir DIR              Output directory (default: outputs/model)
+  --editing-type {AtoG,CtoT}  AtoG for TRIBE/ADAR; CtoT for STAMP/APOBEC (default: AtoG)
+  --min-reads INT           Minimum site-level read coverage (default: 20)
+  --min-edit-pct FLOAT      Minimum site-level edit% to keep (default: 0)
+  --min-fold-change FLOAT   Minimum gene-level fold-change over control (default: 1.0)
+  --min-total-reads INT     Minimum gene-level total reads (default: 50)
+  --test-fraction FLOAT     Fraction held out for test evaluation (default: 0.2)
+  --test-bootstrap INT      Bootstrap iterations for test metrics (default: 0 = off)
+  --log [DIR]               Write a log file to DIR (default: Logs/)
+```
+
+### `smartie-test`
+
+```
+smartie-test --metadata FILE (--model FILE | --loo-dir DIR | --models FILE [FILE ...]) [options]
+
+Required:
+  --metadata FILE           TSV describing datasets to test on
+
+Model source (choose one):
+  --model FILE              Single trained rf_model.pkl
+  --loo-dir DIR             Auto-discover all Trained_*/rf_model.pkl in this directory
+  --models FILE [FILE ...]  Explicitly list multiple model files
+
+Common options:
+  --outdir DIR              Output directory (default: outputs/cross_test)
+  --editing-type {AtoG,CtoT}  Override editing type (default: read from model config)
+  --min-reads INT           Override minimum reads (default: read from model config)
+  --train-label STR         Label for the training dataset (single model mode)
+  --log [DIR]               Write a log file to DIR
+```
+
+---
+
+## Troubleshooting
+
+**`command not found: smartie-train`**
+Try `python -m smartie_mnl.train_model` instead. On some systems the script directory is not in the PATH. Adding `~/.local/bin` to your PATH (Mac/Linux) or running through `python -m` fixes this.
+
+**`No module named 'smartie'`**
+The installation did not complete correctly. Run `pip install smartie` again, or if you installed in a virtual environment make sure it is activated first.
+
+**`ValueError: no gene name column found`**
+Your input file is missing a column named `Name`, `gene_id`, or `Gene`. Check that the file is tab-separated and the header row matches the expected format (see [Input file format](#input-file-format)).
+
+**`ValueError: no A-to-G edit count column`**
+Your file has neither `Editbase_count` nor `G_count`. Rename the column containing edited read counts to one of those names.
+
+**Model trains but precision is very low (< 30% at top-50)**
+This usually means one of: (a) the known targets file is very small (< 20 genes) and the model cannot learn reliably; (b) the experiment and control conditions are not sufficiently different — check that the ADAR/APOBEC fusion was expressed; or (c) site-level filters are too loose — try `--min-reads 50 --min-edit-pct 5`.
+
+**Plots are not generated / `matplotlib` error**
+Run `pip install matplotlib seaborn` and try again. If you are on a headless server, the `Agg` backend is used automatically so no display is needed.
+
+---
+
+## Citation
+
+If you use `smartie` in your research, please cite the original TRIBE and STAMP papers along with this repository.
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE).

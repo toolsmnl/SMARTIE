@@ -1,0 +1,4 @@
+[console_scripts]
+SMARTIE = smartie_mnl.app.launcher:main
+smartie-test = smartie_mnl.cross_dataset_heatmap:main
+smartie-train = smartie_mnl.train_model:main
