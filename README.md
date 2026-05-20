@@ -152,7 +152,7 @@ The pretrained model is applied automatically; no model file needs to be supplie
 
 ### Tutorial: try it with the example data
 
-The repository includes a small example dataset using Ataxin-2 experiment ([Singh et al, 2021](https://elifesciences.org/articles/60326)) and control files ([Koppaka et al, 2024](https://wellcomeopenresearch.org/articles/10-112)) as ['example_data.7z'](https://github.com/toolsmnl/SMARTIE/blob/23540c2c36e2557d3ee127c177a0feb206aacf7a/Example_Data.7z) which unzips to `example_data/` folder. It can be used to verify that the installation is working and to see what a complete SMARTIE run looks like before applying it to a real experiment. The files are:
+The repository includes a small example dataset using Ataxin-2 experiment ([Singh et al, 2021](https://elifesciences.org/articles/60326)) and control files ([Koppaka et al, 2024](https://wellcomeopenresearch.org/articles/10-112)) in ['Tutorial/'](https://github.com/toolsmnl/SMARTIE/tree/9519921742eba66c2d4fe1ea789357a467cade01/Tutorial) folder as 'Example_data.7z'. It can be used to verify that the installation is working and to see what a complete SMARTIE run looks like before applying it to a real experiment. The files are:
 
 | File                                  | Role                                  |
 | ------------------------------------- | ------------------------------------- |
@@ -171,7 +171,7 @@ To run the example end-to-end:
 5. Click **Run** and wait for the progress log to finish.
 6. The browser displays the ranked predictions, the EPAR heatmap, and the Venn diagram. Use **Download** to export everything as `smartie_predictions.zip`.
 
-If the run completes and the plots appear without errors, the installation is working correctly. The same dataset is used in the [command-line tutorial](#tutorial-run-the-example-data-from-the-command-line), and the two outputs should be identical.
+The ['Tutorial/'](https://github.com/toolsmnl/SMARTIE/tree/9519921742eba66c2d4fe1ea789357a467cade01/Tutorial) folder also contains the expected outputs for the run as 'smartie-predictions.7z'. If the run completes and the plots appear without errors, the installation is working correctly. The same dataset is used in the [command-line tutorial](#tutorial-run-the-example-data-from-the-command-line), and the two outputs should be identical.
 
 ---
 
@@ -330,7 +330,7 @@ The bundled `SMARTIE.pkl` model is located automatically.
 
 ### Tutorial: run the example data from the command line
 
-The same example dataset used in the [GUI tutorial](#tutorial-try-it-with-the-example-data) can be run from the command line. The files (`RBP_Exp_1.txt`, `RBP_Exp_2.txt`, `Ctrl_1.txt`, `Ctrl_2.txt`, `Targets.csv`) are in the `example_data.7z` file of the repository.
+The same example dataset used in the [GUI tutorial](#tutorial-try-it-with-the-example-data) can be run from the command line. The files (`RBP_Exp_1.txt`, `RBP_Exp_2.txt`, `Ctrl_1.txt`, `Ctrl_2.txt`, `Targets.csv`) are in the `example_data.7z` file present in the 'Tutorial' folder.
 
 1. From the repository root, create a metadata TSV pointing at the example files. Save it as `example_data/metadata.tsv`:
 
