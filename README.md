@@ -181,6 +181,29 @@ To predict targets using the bundled model:
 
 The pretrained model is applied automatically; no model file needs to be supplied.
 
+### Tutorial: try it with the example data
+
+The repository includes a small example dataset in its [`example_data/`](example_data/) folder. It can be used to verify that the installation is working and to see what a complete SMARTIE run looks like before applying it to a real experiment. The files are:
+
+| File                                  | Role                                  |
+| ------------------------------------- | ------------------------------------- |
+| `RBP_Exp_1.txt`, `RBP_Exp_2.txt`      | Experiment replicates                 |
+| `Ctrl_1.txt`, `Ctrl_2.txt`            | Control replicates                    |
+| `Targets.csv`                         | Known target genes (for evaluation)   |
+
+If you installed SMARTIE via `pip` without cloning the repository, download these five files from the [`example_data/`](https://github.com/toolsmnl/SMARTIE/tree/main/example_data) folder of the GitHub repository.
+
+To run the example end-to-end:
+
+1. Launch the application with `SMARTIE` and select **Predict Targets** in the sidebar.
+2. Under **Experiment replicates**, upload `RBP_Exp_1.txt` and `RBP_Exp_2.txt`.
+3. Under **Control replicates**, upload `Ctrl_1.txt` and `Ctrl_2.txt`.
+4. Under **Targets file**, upload `Targets.csv`.
+5. Click **Run** and wait for the progress log to finish.
+6. The browser displays the ranked predictions, the EPAR heatmap, and the Venn diagram. Use **Download** to export everything as `smartie_predictions.zip`.
+
+If the run completes and the plots appear without errors, the installation is working correctly. The same dataset is used in the [command-line tutorial](#tutorial-run-the-example-data-from-the-command-line), and the two outputs should be identical.
+
 ---
 
 ## 3. Output directory layout
@@ -239,12 +262,12 @@ results/
 │       ├── epar_heatmap.{pdf,png}
 │       ├── epar_values.tsv
 │       └── venn_diagram.{pdf,png}
-├── Imp/
+├── Hrp-48/
 │   ├── predictions.tsv
 │   ├── gene_features.tsv
 │   └── plots/
 │       └── ...
-├── Fmr1/
+├── Thor/
 │   ├── predictions.tsv
 │   ├── gene_features.tsv
 │   └── plots/
@@ -313,8 +336,8 @@ Create a tab-separated file describing each dataset to be analysed:
 
 ```
 label       expt_files                                          ctrl_files                                          targets_file
-MyRBP_K562  data/MyRBP_K562_rep1.txt;data/MyRBP_K562_rep2.txt   data/ADAR_K562_rep1.txt;data/ADAR_K562_rep2.txt   known/MyRBP_K562_known.txt
-MyRBP_HEK   data/MyRBP_HEK_rep1.txt;data/MyRBP_HEK_rep2.txt     data/ADAR_HEK_rep1.txt;data/ADAR_HEK_rep2.txt     known/MyRBP_HEK_known.txt
+MyRBP_A  data/MyRBP_A_rep1.txt;data/MyRBP_A_rep2.txt   data/Ctrl_A_rep1.txt;data/Ctrl_B_rep2.txt   known/MyRBP_A_known.txt
+MyRBP_B  data/MyRBP_B_rep1.txt;data/MyRBP_B_rep2.txt     data/Ctrl_B_rep1.txt;data/Ctrl_B_rep2.txt     known/MyRBP_B_known.txt
 ```
 
 | Column             | Required | Description                                                                       |
@@ -323,9 +346,8 @@ MyRBP_HEK   data/MyRBP_HEK_rep1.txt;data/MyRBP_HEK_rep2.txt     data/ADAR_HEK_re
 | `expt_files`       | Yes      | Semicolon-separated paths to experiment replicate files.                          |
 | `ctrl_files`       | Yes      | Semicolon-separated paths to control replicate files.                             |
 | `targets_file`     | Yes      | Plain-text file of known target genes, one per line. A placeholder may be used if none are available. |
-| `background_files` | No       | Semicolon-separated background (e.g. gDNA) files for site-level noise filtering.  |
 
-Replicate files within a single cell are separated by semicolons. The legacy column names `dataset_name`, `bg_files`, and `validation_targets` are also accepted.
+Replicate files within a single cell are separated by semicolons. 
 
 ### Step 2: Run the prediction
 
@@ -345,6 +367,42 @@ smartie-test \
     --model    path/to/your/rf_model.pkl \
     --outdir   results/
 ```
+
+### Tutorial: run the example data from the command line
+
+The same example dataset used in the [GUI tutorial](#tutorial-try-it-with-the-example-data) can be run from the command line. The files (`RBP_Exp_1.txt`, `RBP_Exp_2.txt`, `Ctrl_1.txt`, `Ctrl_2.txt`, `Targets.csv`) are in the [`example_data/`](example_data/) folder of the repository.
+
+1. From the repository root, create a metadata TSV pointing at the example files. Save it as `example_data/metadata.tsv`:
+
+```
+label        expt_files                                              ctrl_files                                          targets_file
+Example_RBP  example_data/RBP_Exp_1.txt;example_data/RBP_Exp_2.txt   example_data/Ctrl_1.txt;example_data/Ctrl_2.txt     example_data/Targets.csv
+```
+
+The columns are separated by tabs and the replicate files within each cell by semicolons.
+
+2. Run the prediction:
+
+```bash
+smartie-test \
+    --metadata example_data/metadata.tsv \
+    --outdir   results/example/
+```
+
+3. When the command finishes, the output is organised as follows:
+
+```
+results/example/
+└── Example_RBP/
+    ├── predictions.tsv
+    ├── gene_features.tsv
+    └── plots/
+        ├── epar_heatmap.{pdf,png}
+        ├── epar_values.tsv
+        └── venn_diagram.{pdf,png}
+```
+
+`predictions.tsv` is the ranked candidate list, and the EPAR heatmap and Venn diagram show how strongly the top predictions overlap with the known targets in `Targets.csv`. If both plots appear and `predictions.tsv` is populated, the command-line installation is working correctly.
 
 ### Prediction options
 
@@ -366,7 +424,7 @@ The complete list of options is available via `smartie-test --help`. The output 
 
 Instructions for training a custom model, performing exhaustive feature selection, and resolving common issues are provided in [`docs/ADVANCED.md`](docs/ADVANCED.md). The pretrained model documented in Parts 1 and 2 is sufficient for most analyses.
 
-Citation
+## Citation
 
 If SMARTIE contributes to your work, please cite the bioRxiv preprint:
 
