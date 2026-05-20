@@ -7,8 +7,6 @@ SMARTIE can be used in two ways:
 - **The SMARTIE application**: a graphical, point-and-click web interface. Recommended for users without a bioinformatics background.
 - **The command-line interface**: `smartie-test`, `smartie-train`, and related commands, intended for scripting and batch analysis.
 
-Both interfaces run the same underlying pipeline
-
 ---
 
 ## Table of contents
