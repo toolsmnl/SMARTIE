@@ -366,16 +366,19 @@ The complete list of options is available via `smartie-test --help`. The output 
 
 Instructions for training a custom model, performing exhaustive feature selection, and resolving common issues are provided in [`docs/ADVANCED.md`](docs/ADVANCED.md). The pretrained model documented in Parts 1 and 2 is sufficient for most analyses.
 
-## Citation
+Citation
 
-If SMARTIE contributes to your work, please cite: 
-*SMARTIE: A Machine-Learning approach for investigating RBP-RNA interactions identified by Editing
-Omkar Koppaka, Utham Kumar, Gaurav Ahuja, Rishikesh Yadav, Baskar Bakthavachalu
-bioRxiv 2026.05.18.726004; doi: https://doi.org/10.64898/2026.05.18.726004*.
+If SMARTIE contributes to your work, please cite the bioRxiv preprint:
+
+> Koppaka O, Kumar U, Ahuja G, Yadav R, Bakthavachalu B (2026).
+> *SMARTIE: A Machine-Learning approach for investigating RBP-RNA interactions identified by Editing.*
+> bioRxiv 2026.05.18.726004. <https://doi.org/10.64898/2026.05.18.726004>
+
+A `CITATION.cff` file is included at the repository root, so the citation can also be obtained directly from the GitHub "Cite this repository" button.
 
 ## License
 
-SMARTIE is released under the [GPL-3.0](LICENSE).
+SMARTIE is released under the [GNU General Public License v3.0 or later](LICENSE). This permits free use, modification, and redistribution of the code for any purpose, provided that any redistributed modified version is itself released under GPL-3.0 with source code made available. Internal use, including in commercial settings, does not trigger any obligation. Citation of the manuscript above is expected for any published work that uses SMARTIE.
 
 ## Contact
 
