@@ -1,0 +1,58 @@
+# YAML 1.2
+# ---------
+# CITATION.cff for SMARTIE
+# When this file is present at the repository root, GitHub renders a
+# "Cite this repository" button on the project page.
+#
+# Update the AUTHOR placeholders below before the public release.
+
+cff-version: 1.2.0
+message: "If SMARTIE contributes to your work, please cite both the software and the manuscript listed under 'preferred-citation'."
+title: "SMARTIE: Systematic Machine-learning Approach for RBP Target Identification from Editing data"
+abstract: "SMARTIE is a machine-learning ranker based on the XGBoost algorithm that identifies RNA targets of RNA-binding proteins from TRIBE and STAMP editing data."
+type: software
+license: GPL-3.0-or-later
+repository-code: "https://github.com/toolsmnl/SMARTIE"
+url: "https://github.com/toolsmnl/SMARTIE"
+keywords:
+  - RBP
+  - RNA-binding proteins
+  - TRIBE
+  - STAMP
+  - machine learning
+  - XGBoost
+  - target identification
+  - RNA editing
+
+# ---------------------------------------------------------------------------
+# Authors of the software (fill in for every co-author)
+# ---------------------------------------------------------------------------
+authors:
+  - family-names: "REPLACE_FAMILY_NAME"
+    given-names: "REPLACE_GIVEN_NAME"
+    affiliation: "Indian Institute of Technology Mandi"
+    # orcid: "https://orcid.org/0000-0000-0000-0000"
+  # Add additional authors as further list items in the same format.
+  # - family-names: ...
+  #   given-names: ...
+  #   affiliation: ...
+  #   orcid: ...
+
+# ---------------------------------------------------------------------------
+# Preferred citation — the manuscript people should actually cite in papers
+# ---------------------------------------------------------------------------
+preferred-citation:
+  type: article
+  title: "REPLACE_WITH_MANUSCRIPT_TITLE"
+  authors:
+    - family-names: "REPLACE_FAMILY_NAME"
+      given-names: "REPLACE_GIVEN_NAME"
+      affiliation: "Indian Institute of Technology Mandi"
+      # orcid: "https://orcid.org/0000-0000-0000-0000"
+    # Repeat for every manuscript author, in author order.
+  journal: "bioRxiv"
+  year: 2026
+  month: 5
+  doi: "10.64898/2026.05.18.726004"
+  url: "https://www.biorxiv.org/content/10.64898/2026.05.18.726004v1"
+  notes: "Preprint. Update the journal, volume, pages and DOI once the manuscript is accepted for publication."
