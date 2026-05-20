@@ -78,10 +78,8 @@ SMARTIE runs on **Linux, macOS, and Windows** under **Python 3.10 or newer**.
 
 Dependencies are installed automatically by `pip`. (see [Section 2](#2-installation-and-prediction-with-the-smartie-application)). In case of an error where dependencies need to be installed manually, a `requirements.txt` file bundled with the package:
 
-```
-bash
+```bash
 pip install -r requirements.txt
-
 ```
 
 ---
