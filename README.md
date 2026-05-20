@@ -368,7 +368,10 @@ Instructions for training a custom model, performing exhaustive feature selectio
 
 ## Citation
 
-If SMARTIE contributes to your work, please cite *[paper or preprint placeholder]*.
+If SMARTIE contributes to your work, please cite:
+*[ SMARTIE: A Machine-Learning approach for investigating RBP-RNA interactions identified by Editing
+Omkar Koppaka, Utham Kumar, Gaurav Ahuja, Rishikesh Yadav, Baskar Bakthavachalu
+bioRxiv 2026.05.18.726004; doi: https://doi.org/10.64898/2026.05.18.726004 ]*.
 
 ## License
 
