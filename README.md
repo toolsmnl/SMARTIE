@@ -50,7 +50,7 @@ chr2R  17977621    dpr13            EXON    0        18       12       0        
 
 </details>
 
-The following column names are accepted for each required quantity, so files from other pipelines generally do not need to be renamed either:
+The following column names are accepted for each required quantity :
 
 | Column      | Accepted names                                                          |
 | ----------- | ----------------------------------------------------------------------- |
