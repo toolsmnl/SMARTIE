@@ -152,7 +152,7 @@ The pretrained model is applied automatically; no model file needs to be supplie
 
 ### Tutorial: try it with the example data
 
-The repository includes a small example dataset as (['example_data.7z'](https://github.com/toolsmnl/SMARTIE/blob/23540c2c36e2557d3ee127c177a0feb206aacf7a/Example_Data.7z)) which unzips to [`example_data/`] folder. It can be used to verify that the installation is working and to see what a complete SMARTIE run looks like before applying it to a real experiment. The files are:
+The repository includes a small example dataset using Ataxin-2 experiment [Singh et al, 2021](https://elifesciences.org/articles/60326) and control files [Koppaka et al, 2024](https://wellcomeopenresearch.org/articles/10-112) as (['example_data.7z'](https://github.com/toolsmnl/SMARTIE/blob/23540c2c36e2557d3ee127c177a0feb206aacf7a/Example_Data.7z)) which unzips to [`example_data/`] folder. It can be used to verify that the installation is working and to see what a complete SMARTIE run looks like before applying it to a real experiment. The files are:
 
 | File                                  | Role                                  |
 | ------------------------------------- | ------------------------------------- |
