@@ -29,7 +29,9 @@ Training a custom model, exhaustive feature selection, and troubleshooting are d
 
 # Part 1: The SMARTIE application (graphical interface)
 
-## 1.1 Input Files
+## 1 Requirements
+
+### 1.1 Input Files
 
 For running SMARTIE, Input files in a **tab-separated text file (.tsv/.txt)** are required. A representative example is shown below (Expand it and scroll horizontally to view all columns.)
 
@@ -150,7 +152,7 @@ The pretrained model is applied automatically; no model file needs to be supplie
 
 ### Tutorial: try it with the example data
 
-The repository includes a small example dataset in its [`example_data/`](example_data/) folder. It can be used to verify that the installation is working and to see what a complete SMARTIE run looks like before applying it to a real experiment. The files are:
+The repository includes a small example dataset as (['example_data.7z'](https://github.com/toolsmnl/SMARTIE/blob/23540c2c36e2557d3ee127c177a0feb206aacf7a/Example_Data.7z)) which unzips to [`example_data/`] folder. It can be used to verify that the installation is working and to see what a complete SMARTIE run looks like before applying it to a real experiment. The files are:
 
 | File                                  | Role                                  |
 | ------------------------------------- | ------------------------------------- |
@@ -158,7 +160,7 @@ The repository includes a small example dataset in its [`example_data/`](example
 | `Ctrl_1.txt`, `Ctrl_2.txt`            | Control replicates                    |
 | `Targets.csv`                         | Known target genes (for evaluation)   |
 
-If you installed SMARTIE via `pip` without cloning the repository, download these five files from the [`example_data/`](https://github.com/toolsmnl/SMARTIE/tree/main/example_data) folder of the GitHub repository.
+If you installed SMARTIE via `pip` without cloning the repository, download the example dataset as (['example_data.7z'](https://github.com/toolsmnl/SMARTIE/blob/23540c2c36e2557d3ee127c177a0feb206aacf7a/Example_Data.7z)) of the GitHub repository.
 
 To run the example end-to-end:
 
@@ -328,7 +330,7 @@ The bundled `SMARTIE.pkl` model is located automatically.
 
 ### Tutorial: run the example data from the command line
 
-The same example dataset used in the [GUI tutorial](#tutorial-try-it-with-the-example-data) can be run from the command line. The files (`RBP_Exp_1.txt`, `RBP_Exp_2.txt`, `Ctrl_1.txt`, `Ctrl_2.txt`, `Targets.csv`) are in the [`example_data/`](example_data/) folder of the repository.
+The same example dataset used in the [GUI tutorial](#tutorial-try-it-with-the-example-data) can be run from the command line. The files (`RBP_Exp_1.txt`, `RBP_Exp_2.txt`, `Ctrl_1.txt`, `Ctrl_2.txt`, `Targets.csv`) are in the [`example_data.7z`] file of the repository.
 
 1. From the repository root, create a metadata TSV pointing at the example files. Save it as `example_data/metadata.tsv`:
 
