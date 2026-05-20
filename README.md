@@ -1,13 +1,13 @@
 # SMARTIE
 
-SMARTIE (**S**ystematic **M**achine-learning **A**pproach for **R**BP **T**arget **I**dentification from **E**diting data) is a machine-learning ranker, based on the XGBoost algorithm, that ranks genes as likely targets of an RNA-binding protein (RBP) from TRIBE / STAMP data. The package ships a pretrained model (`SMARTIE.pkl`) that predicts RNA targets from TRIBE / STAMP data of any sample source.
+SMARTIE (**S**ystematic **M**achine-learning **A**pproach for **R**BP **T**arget **I**dentification from **E**diting data) is a machine-learning tool based on the XGBoost algorithm, that ranks genes as likely targets of an RNA-binding protein (RBP) from TRIBE / STAMP data. The package ships a ready-to-use pretrained model (`SMARTIE.pkl`).
 
 SMARTIE can be used in two ways:
 
 - **The SMARTIE application**: a graphical, point-and-click web interface. Recommended for users without a bioinformatics background.
 - **The command-line interface**: `smartie-test`, `smartie-train`, and related commands, intended for scripting and batch analysis.
 
-Both interfaces run the same underlying pipeline and produce identical results.
+Both interfaces run the same underlying pipeline
 
 ---
 
@@ -33,16 +33,16 @@ Training a custom model, exhaustive feature selection, and troubleshooting are d
 
 ## 1. Requirements
 
-Two prerequisites must be satisfied before running SMARTIE: the **input files** must conform to a supported format, and a small set of **Python dependencies** must be available. The dependencies are installed automatically during package installation, as described below.
+Two prerequisites must be satisfied before running SMARTIE: the **input files** must conform to a supported format, and a set of **Python dependencies** must be available. The dependencies are installed automatically during package installation, as described below.
 
 ### 1.1 Input file format
 
-SMARTIE operates on **editing-site files** produced by a TRIBE or STAMP pipeline. One file is required per replicate, for two sample groups:
+SMARTIE operates on **editing-site files** produced by a TRIBE or STAMP pipeline. Each experimental and control replicate has to be provided as a separate file. For example:
 
-- **Experiment replicates**: RBP-ADAR (or RBP-APOBEC) fusion samples.
-- **Control replicates**: ADAR-only (or APOBEC-only) baseline samples.
+- **Experiment replicates**: RBP-Exp-1 and RBP-Exp-2.
+- **Control replicates**: Ctrl-1 and Ctrl-2.
 
-Each file must be a **tab-separated text file** with one row per editing site. A raw TRIBE/STAMP output file is wide: it carries per-base counts for both the RNA sample and the matched gDNA/wtRNA reference. The full column set is:
+Each file must be a **tab-separated text file (.tsv/.txt)** with columns containing:
 
 `Chr`, `Edit_coord`, `Name`, `Type`, `A_count`, `T_count`, `C_count`, `G_count`, `Total_count`, `A_count_gDNA/wtRNA`, `T_count_gDNA/wtRNA`, `C_count_gDNA/wtRNA`, `G_count_gDNA/wtRNA`, `Total_count_gDNA/wtRNA`, `Editbase_count`, `Total_count`, `Editbase_count_gDNA/wtRNA`, `Total_count_gDNA/wtRNA`
 
@@ -65,7 +65,7 @@ chr2R  17977621    dpr13            EXON    0        18       12       0        
 
 </details>
 
-No reformatting of this file is required. SMARTIE reads it as produced by the TRIBE/STAMP pipeline. It uses only three quantities from each row: the **gene name** (`Name`), the **edit count** (`Editbase_count`), and the **total read count**. The column header `Total_count` appears twice; when the file is read, the second occurrence is interpreted as `Total_count.1`, and SMARTIE uses this RNA-sample total. All remaining columns, including the per-base and gDNA/wtRNA columns, are ignored.
+No reformatting of this file is required. SMARTIE reads the output file from the TRIBE/STAMP pipeline (HyperTRIBE package developed by McMahon et al, 2016). It uses the **gene name** (`Name`), the **edit count** (`Editbase_count`), and the **total read count**. The column header `Total_count` appears twice; when the file is read, the second occurrence is interpreted as `Total_count.1`, and SMARTIE uses this RNA-sample total. All remaining columns, including the per-base and gDNA/wtRNA columns, are ignored.
 
 The following column names are accepted for each required quantity, so files from other pipelines generally do not need to be renamed either:
 
@@ -78,7 +78,7 @@ The following column names are accepted for each required quantity, so files fro
 
 All other columns are ignored. Sites with `Total_count == 0`, and rows containing non-numeric counts, are discarded.
 
-A **targets file** is required to generate the evaluation plots: the EPAR heatmap and Venn diagram. This is a plain-text file listing known target gene names, one per line:
+Optionally, A **targets file** (if available) can be provided to validate the list of targets in a plain-text format listing known target gene names, one per line:
 
 ```
 DDX3X
