@@ -31,22 +31,9 @@ Training a custom model, exhaustive feature selection, and troubleshooting are d
 
 # Part 1: The SMARTIE application (graphical interface)
 
-## 1. Requirements
+## 1.1 Input Files
 
-Two prerequisites must be satisfied before running SMARTIE: the **input files** must conform to a supported format, and a set of **Python dependencies** must be available. The dependencies are installed automatically during package installation, as described below.
-
-### 1.1 Input file format
-
-SMARTIE operates on **editing-site files** produced by a TRIBE or STAMP pipeline. Each experimental and control replicate has to be provided as a separate file. For example:
-
-- **Experiment replicates**: RBP-Exp-1 and RBP-Exp-2.
-- **Control replicates**: Ctrl-1 and Ctrl-2.
-
-Each file must be a **tab-separated text file (.tsv/.txt)** with columns containing:
-
-`Chr`, `Edit_coord`, `Name`, `Type`, `A_count`, `T_count`, `C_count`, `G_count`, `Total_count`, `A_count_gDNA/wtRNA`, `T_count_gDNA/wtRNA`, `C_count_gDNA/wtRNA`, `G_count_gDNA/wtRNA`, `Total_count_gDNA/wtRNA`, `Editbase_count`, `Total_count`, `Editbase_count_gDNA/wtRNA`, `Total_count_gDNA/wtRNA`
-
-A representative example is shown below. Because the file is wide, the example is collapsed by default. Expand it and scroll horizontally to view all columns.
+For running SMARTIE, Input files in a **tab-separated text file (.tsv/.txt)** are required. A representative example is shown below (Expand it and scroll horizontally to view all columns.)
 
 <details>
 <summary><b>Show a full raw file example</b> (scroll horizontally to see all columns)</summary>
@@ -65,8 +52,6 @@ chr2R  17977621    dpr13            EXON    0        18       12       0        
 
 </details>
 
-No reformatting of this file is required. SMARTIE reads the output file from the TRIBE/STAMP pipeline (HyperTRIBE package developed by McMahon et al, 2016). It uses the **gene name** (`Name`), the **edit count** (`Editbase_count`), and the **total read count**. The column header `Total_count` appears twice; when the file is read, the second occurrence is interpreted as `Total_count.1`, and SMARTIE uses this RNA-sample total. All remaining columns, including the per-base and gDNA/wtRNA columns, are ignored.
-
 The following column names are accepted for each required quantity, so files from other pipelines generally do not need to be renamed either:
 
 | Column      | Accepted names                                                          |
@@ -76,7 +61,9 @@ The following column names are accepted for each required quantity, so files fro
 |             | `T_count`, `t_count` (C-to-T)                                           |
 | Total count | `Total_count`, `total_count`, `Total_count.1`                           |
 
-All other columns are ignored. Sites with `Total_count == 0`, and rows containing non-numeric counts, are discarded.
+Each experimental and control replicate has to be provided as a separate file. For example:
+- **Experiment replicates**: RBP-Exp-1 and RBP-Exp-2.
+- **Control replicates**: Ctrl-1 and Ctrl-2.
 
 Optionally, A **targets file** (if available) can be provided to validate the list of targets in a plain-text format listing known target gene names, one per line:
 
@@ -87,39 +74,23 @@ PUM2
 NUDT21
 ```
 
-If no known targets are available, ranked predictions are still produced; in that case a score-distribution plot is generated in place of the EPAR heatmap and Venn diagram. A CSV file containing a `Name` column is also accepted.
-
 ### 1.2 Dependencies
 
-SMARTIE is a Python package and runs on **Linux, macOS, and Windows** (natively or via WSL) under **Python 3.10 or newer**.
+SMARTIE runs on **Linux, macOS, and Windows** under **Python 3.10 or newer**.
 
-Dependencies do not need to be installed manually. They are declared within the package and are resolved automatically by `pip` during installation (see [Section 2](#2-installation-and-prediction-with-the-smartie-application)). For reference, the package also includes a `requirements.txt` file listing the same dependencies:
+Dependencies are installed automatically by `pip`. (see [Section 2](#2-installation-and-prediction-with-the-smartie-application)). In case of an error where dependencies need to be installed manually, a `requirements.txt` file bundled with the package:
 
 ```
-numpy
-pandas
-scipy
-scikit-learn
-matplotlib
-seaborn
-streamlit
-xgboost
-lightgbm
-```
-
-If the dependencies need to be installed separately (for example, into a pre-existing environment), the following command may be used:
-
-```bash
+bash
 pip install -r requirements.txt
-```
 
-In the standard installation procedure this step is performed automatically.
+```
 
 ---
 
 ## 2. Installation and prediction with the SMARTIE application
 
-The SMARTIE application is a web interface that runs locally on the user's own machine. The package is installed once, a single command launches the application, and a browser window opens automatically; no further use of the terminal is required.
+The SMARTIE application is a web interface that runs locally.
 
 ### Step 1: Install SMARTIE
 
@@ -208,8 +179,6 @@ If the run completes and the plots appear without errors, the installation is wo
 
 ## 3. Output directory layout
 
-The set of files produced is the same regardless of the interface; the interfaces differ only in *where* the results are placed:
-
 - **Command-line interface.** Results are written directly to the directory specified by `--outdir`. If the directory does not exist, it is created.
 - **SMARTIE application.** Results are displayed in the browser and made available through the **Download** button as a single ZIP archive (`smartie_predictions.zip`). The archive contains the same files described below.
 
@@ -224,7 +193,15 @@ A single-dataset run analyses one experiment/control pair, for example an Ataxin
 - *Command line*: a metadata TSV containing **one row**.
 - *Application*: the **Predict Targets** page, with one set of experiment and control files uploaded.
 
-The dataset is assigned its own folder, named after its `label`, containing the ranked predictions, the computed features, and a `plots/` subfolder:
+If **no** known-targets file is supplied, the `plots/` subfolder contains a score-distribution plot:
+
+```
+    └── plots/
+        └── score_distribution.{pdf,png}
+```
+
+
+When targets are provided for validation, additional plots are generated which include a EPAR heatmap and Venn diagram comparing between the SMARTIE predictions and the provided targets.
 
 ```
 results/
@@ -237,12 +214,6 @@ results/
         └── venn_diagram.{pdf,png}    # evaluation plot, requires a known-targets file
 ```
 
-If **no** known-targets file is supplied, the EPAR heatmap and Venn diagram cannot be computed. In that case the `plots/` subfolder contains a score-distribution plot instead:
-
-```
-    └── plots/
-        └── score_distribution.{pdf,png}
-```
 
 ### 3.2 Multi-dataset prediction
 
@@ -312,7 +283,7 @@ The raw values behind the EPAR heatmap are also written as `epar_values.tsv`, al
 
 ## 4. Installation and prediction from the command line
 
-The command-line interface provides the same functionality as the application and is intended for scripting and batch analysis. Both interfaces produce identical results.
+The command-line interface provides the same functionality as the application and is intended for scripting and batch analysis.
 
 ### Installation
 
@@ -357,16 +328,7 @@ smartie-test \
     --outdir results/
 ```
 
-The bundled `SMARTIE.pkl` model is located automatically, and the default per-site coverage filter (`--min-reads 20`) is applied.
-
-To use an alternative model, for example one trained by the user:
-
-```bash
-smartie-test \
-    --metadata my_data.tsv \
-    --model    path/to/your/rf_model.pkl \
-    --outdir   results/
-```
+The bundled `SMARTIE.pkl` model is located automatically.
 
 ### Tutorial: run the example data from the command line
 
@@ -411,8 +373,6 @@ results/example/
 | `--min-reads N`              | 20                   | Discard editing sites with fewer than N total reads before feature computation.              |
 | `--min-edit-pct F`           | 0.0                  | Discard sites with an edit percentage below F (range 0-100). Useful for noisy controls.      |
 | `--editing-type {AtoG,CtoT}` | AtoG                 | A-to-G for ADAR-based TRIBE; C-to-T for APOBEC-based STAMP.                                   |
-| `--background F [F ...]`     | none                 | Derive a site-level background filter from gDNA / no-enzyme controls and apply it before feature extraction. |
-| `--no-background-filter`     | off                  | Disable background filtering even if one is bundled with the model.                          |
 | `--normalization {simple,median_of_ratios}` | simple | Replicate-normalisation strategy. `simple` is appropriate for most cases.                  |
 | `--outdir DIR`               | `outputs/cross_test` | Output directory; created if it does not exist.                                              |
 
