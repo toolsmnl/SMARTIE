@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Build / distribution
+build/
+dist/
+*.egg-info/
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+env/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# SMARTIE runtime outputs
+outputs/
+Logs/
+mnt/
+
+# Large example data (download separately from repo)
+Example_Data/
+
+# Nested repo clone (accidental)
+/SMARTIE/
+
+# Root-level model duplicate (bundled inside smartie_mnl/models/)
+/SMARTIE.pkl
+
+# Metadata files used internally during development
+Metadata_Files_for_training_and_testing/
