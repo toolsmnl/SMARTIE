@@ -1,6 +1,6 @@
 # SMARTIE
 
-SMARTIE (**S**ystematic **M**achine-learning **A**pproach for **R**BP **T**argets **I**dentified by **E**diting) is a machine-learning tool based on the XGBoost algorithm, that ranks genes as likely targets of an RNA-binding protein (RBP) from TRIBE / STAMP data. The package ships a ready-to-use pretrained model (`SMARTIE.pkl`).
+SMARTIE (**S**ystematic **M**achine-learning **A**pproach for **R**BP **T**argets **I**dentified by **E**diting) is a machine-learning tool based on the XGBoost algorithm, that ranks genes as likely targets of an RNA-binding protein (RBP) from TRIBE / STAMP data. The package ships a ready-to-use pretrained model (`SMARTIE.pkl`). Detailed demonstrative video tutorials are available on the official youtube channel of [MNLTools](https://www.youtube.com/channel/UCWI3TLG4mFfU-enSNWL_yGw) 
 
 SMARTIE can be used in two ways:
 
