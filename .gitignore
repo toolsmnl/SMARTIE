@@ -44,6 +44,9 @@ mnt/
 # Large example data (download separately from repo)
 Example_Data/
 
+# Nested repo clone (accidental)
+/SMARTIE/
+
 # Root-level model duplicate (bundled inside smartie_mnl/models/)
 /SMARTIE.pkl
 

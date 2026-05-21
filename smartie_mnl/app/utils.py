@@ -11,7 +11,6 @@ Handles:
 
 from __future__ import annotations
 
-import importlib
 import io
 import os
 import shutil
@@ -28,75 +27,22 @@ import streamlit as st
 
 # ── Pipeline module loader ────────────────────────────────────────────────────
 
-def _find_smartie_core() -> Path | None:
-    """
-    Locate the smartie pipeline scripts.
-
-    Search order:
-      1. smartie Python package (installed via pip)
-      2. ./smartie_core/   (bundled alongside app.py)
-      3. ./                   (scripts placed next to app.py)
-    """
-    # Try installed package
-    try:
-        import smartie_mnl
-        pkg_dir = Path(smartie_mnl.__file__).parent
-        if (pkg_dir / "feature_extraction.py").exists():
-            return pkg_dir
-    except ImportError:
-        pass
-
-    # Try local bundled copy
-    app_dir = Path(__file__).parent.parent
-    for candidate in [app_dir / "smartie_core", app_dir]:
-        if (candidate / "feature_extraction.py").exists():
-            return candidate
-
-    return None
-
-
 @st.cache_resource(show_spinner=False)
 def load_pipeline_modules():
+    """Import the three pipeline modules and return them.
+    Cached so import only happens once per Streamlit session.
     """
-    Dynamically import the three pipeline modules and return them.
-    Results are cached so import only happens once per session.
-    """
-    core_dir = _find_smartie_core()
-    if core_dir is None:
+    try:
+        from smartie_mnl import feature_extraction as fe
+        from smartie_mnl import train_model as tm
+        from smartie_mnl import cross_dataset_heatmap as cd
+        return fe, tm, cd
+    except ImportError as exc:
         st.error(
-            "❌ Could not find smartie pipeline scripts. "
-            "Make sure you installed the package (`pip install smartie`) "
-            "or placed feature_extraction.py / train_model.py / "
-            "cross_dataset_heatmap.py next to app.py."
+            f"❌ Could not import smartie_mnl pipeline modules: {exc}. "
+            "Make sure the package is installed: pip install smartie-mnl"
         )
         st.stop()
-
-    # Insert core directory at front of path so relative imports work
-    sys_path_inserted = str(core_dir) not in sys.path
-    if sys_path_inserted:
-        sys.path.insert(0, str(core_dir))
-
-    spec_fe = importlib.util.spec_from_file_location(
-        "feature_extraction", core_dir / "feature_extraction.py"
-    )
-    fe = importlib.util.module_from_spec(spec_fe)
-    spec_fe.loader.exec_module(fe)
-
-    spec_tm = importlib.util.spec_from_file_location(
-        "train_model", core_dir / "train_model.py"
-    )
-    tm = importlib.util.module_from_spec(spec_tm)
-    sys.modules["feature_extraction"] = fe   # train_model does `from feature_extraction import ...`
-    spec_tm.loader.exec_module(tm)
-
-    spec_cd = importlib.util.spec_from_file_location(
-        "cross_dataset_heatmap", core_dir / "cross_dataset_heatmap.py"
-    )
-    cd = importlib.util.module_from_spec(spec_cd)
-    sys.modules["train_model"] = tm
-    spec_cd.loader.exec_module(cd)
-
-    return fe, tm, cd
 
 
 # ── File upload helpers ────────────────────────────────────────────────────────
