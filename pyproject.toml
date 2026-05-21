@@ -7,14 +7,14 @@ name = "smartie-mnl"
 version = "1.0.0"
 description = "SMARTIE: Machine-learning pipeline for predicting RNA-binding protein targets from TRIBE/STAMP editing data — Molecular Neuroscience Lab"
 readme = "README.md"
-license = { text = "MIT" }
+license = { text = "GPL-3" }
 requires-python = ">=3.10"
 
 keywords = ["TRIBE", "STAMP", "RNA-binding proteins", "A-to-I editing", "bioinformatics", "machine learning"]
 
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: GPL-3 License",
     "Topic :: Scientific/Engineering :: Bio-Informatics",
     "Intended Audience :: Science/Research",
 ]
