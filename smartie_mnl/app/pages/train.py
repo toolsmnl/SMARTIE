@@ -1,5 +1,5 @@
 """
-Train page — train a custom Random Forest model on the user's own editing data.
+Train page — train a custom XGBoost model on the user's own editing data.
 
 Workflow:
   1. Upload experiment + control replicates
@@ -26,17 +26,17 @@ from utils import (
     load_pipeline_modules,
     min_edit_pct_slider,
     min_reads_slider,
+    output_workspace,
     save_uploads,
     save_single_upload,
     show_plots_in_dir,
-    temp_workspace,
 )
 
 
 def show():
     st.title("🎓 Train Your Model")
     st.markdown(
-        "Train a custom Random Forest classifier on your own TRIBE or STAMP data. "
+        "Train a custom XGBoost classifier on your own TRIBE or STAMP data. "
         "You need a list of genes your RBP is known to bind — these act as the positive "
         "training examples. The trained model can then be applied to new experiments."
     )
@@ -178,6 +178,7 @@ def show():
             min_total_reads=min_total_reads,
             min_fold_change=min_fold_change,
             normalization=normalization,
+            out_dir_setting=st.session_state.get("output_dir") or None,
         )
 
 
@@ -187,8 +188,9 @@ def _run_training(
     editing_type, min_reads, min_edit_pct,
     min_total_reads, min_fold_change,
     normalization,
+    out_dir_setting=None,
 ):
-    with temp_workspace() as workspace:
+    with output_workspace(out_dir_setting) as workspace:
         data_dir = workspace / "data"
         out_dir  = workspace / "outputs"
         data_dir.mkdir(); out_dir.mkdir()
@@ -247,8 +249,7 @@ def _run_training(
                 )
                 features_df.to_csv(out_dir / "gene_features.tsv", sep="\t", index=False)
 
-                # Resolve model selection (use RF only for simplicity from UI)
-                selected_models = tm.resolve_model_selection(["rf"], None)
+                selected_models = tm.resolve_model_selection(["xgb"], None)
 
                 # Train
                 print("\nTraining model...")

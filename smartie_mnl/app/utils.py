@@ -39,8 +39,8 @@ def _find_smartie_core() -> Path | None:
     """
     # Try installed package
     try:
-        import smartie
-        pkg_dir = Path(smartie.__file__).parent
+        import smartie_mnl
+        pkg_dir = Path(smartie_mnl.__file__).parent
         if (pkg_dir / "feature_extraction.py").exists():
             return pkg_dir
     except ImportError:
@@ -125,6 +125,24 @@ def temp_workspace():
         yield Path(d)
     finally:
         shutil.rmtree(d, ignore_errors=True)
+
+
+@contextmanager
+def output_workspace(user_dir: str | None):
+    """Use a user-specified persistent directory, or fall back to a temp workspace."""
+    if user_dir:
+        p = Path(user_dir)
+        p.mkdir(parents=True, exist_ok=True)
+        yield p
+    else:
+        with temp_workspace() as p:
+            yield p
+
+
+def savefig(fig, path_stem: Path, dpi: int = 180):
+    """Save a matplotlib figure as both PNG and PDF."""
+    for fmt in ("png", "pdf"):
+        fig.savefig(f"{path_stem}.{fmt}", dpi=dpi, bbox_inches="tight")
 
 
 # ── Stdout capture ─────────────────────────────────────────────────────────────

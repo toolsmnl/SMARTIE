@@ -14,16 +14,19 @@ import pandas as pd
 import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from smartie_mnl._model import load_bundled_model, get_bundled_model_path
 from utils import (
     capture_output,
     editing_type_selector,
     load_pipeline_modules,
     min_edit_pct_slider,
     min_reads_slider,
+    output_workspace,
+    savefig,
     save_uploads,
     save_single_upload,
     show_top_predictions,
-    temp_workspace,
 )
 
 
@@ -65,17 +68,30 @@ def show():
         if ctrl_files:
             st.success(f"✅ {len(ctrl_files)} control file(s) uploaded")
 
-    # ── Step 2: Upload model ────────────────────────────────────────────────
+    # ── Step 2: Model selection ─────────────────────────────────────────────
     st.markdown("---")
-    st.markdown("### Step 2 — Upload your trained model")
-    model_file = st.file_uploader(
-        "rf_model.pkl",
-        type=["pkl"],
-        key="pred_model",
-        label_visibility="collapsed",
+    st.markdown("### Step 2 — Model")
+
+    use_bundled = st.checkbox(
+        "Use bundled pre-trained SMARTIE model",
+        value=True,
+        key="pred_use_bundled",
+        help=f"Ships with the package at: {get_bundled_model_path()}",
     )
-    if model_file:
-        st.success("✅ Model uploaded")
+
+    model_file = None
+    if use_bundled:
+        st.info(f"Using bundled model: `{get_bundled_model_path().name}`")
+    else:
+        st.markdown("**Upload your own trained model (.pkl)**")
+        model_file = st.file_uploader(
+            "rf_model.pkl",
+            type=["pkl"],
+            key="pred_model",
+            label_visibility="collapsed",
+        )
+        if model_file:
+            st.success("✅ Model uploaded")
 
     # Optional validation targets
     st.markdown("***(Optional)*** Upload a known-targets file to evaluate predictions with EPAR")
@@ -111,9 +127,17 @@ def show():
 
     # ── Step 4: Run ─────────────────────────────────────────────────────────
     st.markdown("---")
-    ready = bool(expt_files and ctrl_files and model_file)
+    model_ready = use_bundled or bool(model_file)
+    ready = bool(expt_files and ctrl_files and model_ready)
     if not ready:
-        st.info("📂 Upload experiment files, control files, and a model file to enable Run.")
+        missing = []
+        if not expt_files:
+            missing.append("experiment files")
+        if not ctrl_files:
+            missing.append("control files")
+        if not model_ready:
+            missing.append("a model file")
+        st.info(f"📂 Upload {', '.join(missing)} to enable Run.")
 
     if st.button("▶️ Run Prediction", disabled=not ready,
                  use_container_width=True, type="primary"):
@@ -122,27 +146,30 @@ def show():
             expt_files=expt_files,
             ctrl_files=ctrl_files,
             model_file=model_file,
+            use_bundled=use_bundled,
             targets_file=targets_file,
             editing_type=editing_type,
             min_reads=min_reads,
             min_edit_pct=min_edit_pct,
             top_n=top_n,
+            out_dir_setting=st.session_state.get("output_dir") or None,
         )
 
 
 def _run_prediction(
     fe, tm,
-    expt_files, ctrl_files, model_file, targets_file,
+    expt_files, ctrl_files, model_file, use_bundled, targets_file,
     editing_type, min_reads, min_edit_pct, top_n,
+    out_dir_setting=None,
 ):
-    with temp_workspace() as workspace:
+    with output_workspace(out_dir_setting) as workspace:
         data_dir = workspace / "data"
         out_dir  = workspace / "outputs"
         data_dir.mkdir(); out_dir.mkdir()
 
         expt_paths = save_uploads(expt_files, data_dir)
         ctrl_paths = save_uploads(ctrl_files, data_dir)
-        rf_model   = pickle.loads(model_file.read())
+        rf_model   = load_bundled_model() if use_bundled else pickle.loads(model_file.read())
 
         targets_set: set[str] = set()
         if targets_file:
@@ -343,7 +370,7 @@ def _plot_epar_heatmap(results_df: pd.DataFrame, targets_set: set, plots_dir: Pa
     ax.tick_params(axis="y", labelsize=10, rotation=0)
 
     fig.tight_layout()
-    fig.savefig(plots_dir / "epar_heatmap.png", dpi=180, bbox_inches="tight")
+    savefig(fig, plots_dir / "epar_heatmap")
     plt.close(fig)
 
     df_heat.to_csv(plots_dir / "epar_values.tsv", sep="\t")
@@ -402,7 +429,7 @@ def _plot_venn(results_df: pd.DataFrame, targets_set: set, plots_dir: Path):
         fontsize=12, fontweight="bold",
     )
     fig.tight_layout()
-    fig.savefig(plots_dir / "venn_diagram.png", dpi=180, bbox_inches="tight")
+    savefig(fig, plots_dir / "venn_diagram")
     plt.close(fig)
 
 
@@ -448,7 +475,7 @@ def _plot_score_distribution(results_df: pd.DataFrame, plots_dir: Path):
     )
 
     fig.tight_layout()
-    fig.savefig(plots_dir / "score_distribution.png", dpi=180, bbox_inches="tight")
+    savefig(fig, plots_dir / "score_distribution")
     plt.close(fig)
 
 
@@ -519,5 +546,5 @@ def _plot_enrichment_scatter(results_df: pd.DataFrame, out_dir: Path, plots_dir:
     ax.legend(fontsize=9)
 
     fig.tight_layout()
-    fig.savefig(plots_dir / "enrichment_scatter.png", dpi=180, bbox_inches="tight")
+    savefig(fig, plots_dir / "enrichment_scatter")
     plt.close(fig)

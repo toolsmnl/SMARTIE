@@ -1,5 +1,6 @@
 """
-Train a Random Forest model for RBP target prediction.
+Train an XGBoost model for RBP target prediction (default).
+Other algorithms are available via --models rf|lgbm|all etc.
 
 Uses the 18-feature schema from feature_extraction.py.
 Supports configurable normalization, editing thresholds, editing type,
@@ -44,7 +45,7 @@ python train_model.py \\
 
 =============================================================================
 Outputs (single):
-    rf_model.pkl           - trained Random Forest model
+    rf_model.pkl           - trained model (XGBoost by default)
     model_config.json      - training parameters
     gene_features.tsv      - computed features for all genes
     predictions.tsv        - ranked gene predictions
@@ -106,7 +107,7 @@ try:
 except ImportError:
     _LGBM_AVAILABLE = False
 
-from feature_extraction import (
+from .feature_extraction import (
     load_editing_sites,
     build_features,
     FEATURE_COLUMNS,
@@ -2578,12 +2579,11 @@ def main():
     )
     parser.add_argument("--feature-weights-file", type=str, default=None)
     parser.add_argument(
-        "--models", nargs="+", default=None,
+        "--models", nargs="+", default=["xgb"],
         help=(
-            "Which models to train (default: all). Pass 'all' or any subset of: "
+            "Which models to train (default: xgb). Pass 'all' or any subset of: "
             + ", ".join(MODEL_REGISTRY.keys()) + ". "
-            "XGBoost ('xgb') and LightGBM ('lgbm') are skipped silently if their "
-            "libraries are not installed."
+            "Example: --models xgb rf  to compare XGBoost and Random Forest."
         ),
     )
     parser.add_argument(

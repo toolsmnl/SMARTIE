@@ -92,10 +92,11 @@ from sklearn.metrics import roc_auc_score, roc_curve, precision_recall_curve, av
 
 warnings.filterwarnings("ignore")
 
-from feature_extraction import load_editing_sites, build_features, FEATURE_COLUMNS, \
+from .feature_extraction import load_editing_sites, build_features, FEATURE_COLUMNS, \
     VALID_FEATURE_SETS, get_feature_columns, \
     learn_background_filter, load_background_filter
-from train_model import apply_feature_weights, setup_logging
+from .train_model import apply_feature_weights, setup_logging
+from ._model import get_bundled_model_path
 
 
 # ============================================================================
@@ -309,6 +310,8 @@ def collect_all_results(outdir, dataset_labels, meta_df):
         pred_path = outdir / dl / "predictions.tsv"
         ds_row    = meta_df[meta_df["label"] == dl].iloc[0]
         targets   = ds_row["targets_file"].strip()
+        if not targets:
+            continue
         rec_df    = compute_pct_recovery(pred_path, targets)
         if rec_df is None:
             continue
@@ -1016,8 +1019,8 @@ def run_single_model(
             for pct, key in [(10, "prec_10"), (20, "prec_20"), (50, "prec_50")]:
                 if pct in pct_precisions:
                     dr[key] = pct_precisions[pct]
-        # ROC/PR
-        rp = compute_roc_pr(pred_path, targets)
+        # ROC/PR (only when a targets file was provided)
+        rp = compute_roc_pr(pred_path, targets) if targets else None
         if rp:
             dr.update({
                 "roc_auc": rp["roc_auc"],
@@ -1053,17 +1056,37 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )
-    parser.add_argument(
-        "--metadata", type=str, required=True,
+
+    # Dataset input: metadata file OR direct expt/ctrl flags
+    input_group = parser.add_mutually_exclusive_group(required=True)
+    input_group.add_argument(
+        "--metadata", type=str, default=None,
         help="Metadata TSV: label, expt_files, ctrl_files, targets_file "
              "(bg_files accepted as alias for ctrl_files; background_files column optional)",
     )
+    input_group.add_argument(
+        "--expt", nargs="+", default=None,
+        help="Single-dataset mode: one or more experiment replicate files.",
+    )
 
-    # Model selection (mutually exclusive)
-    model_group = parser.add_mutually_exclusive_group(required=True)
+    parser.add_argument(
+        "--ctrl", nargs="+", default=None,
+        help="Control replicate files (required when --expt is used).",
+    )
+    parser.add_argument(
+        "--targets", type=str, default=None,
+        help="Known-targets file for precision/ROC evaluation (optional with --expt).",
+    )
+    parser.add_argument(
+        "--label", type=str, default="dataset",
+        help="Dataset label used in plot titles (default: 'dataset').",
+    )
+
+    # Model selection (mutually exclusive; defaults to bundled SMARTIE.pkl)
+    model_group = parser.add_mutually_exclusive_group(required=False)
     model_group.add_argument(
-        "--model", type=str,
-        help="Single model mode: path to rf_model.pkl",
+        "--model", type=str, default=None,
+        help="Path to rf_model.pkl (default: bundled SMARTIE model).",
     )
     model_group.add_argument(
         "--loo-dir", type=str,
@@ -1108,7 +1131,17 @@ def main():
     args = parser.parse_args()
     setup_logging(args.log, prefix="cross_test")
 
-    meta_df = load_metadata(Path(args.metadata))
+    if args.expt is not None:
+        if not args.ctrl:
+            parser.error("--ctrl is required when --expt is used")
+        meta_df = pd.DataFrame([{
+            "label":       args.label,
+            "expt_files":  ";".join(args.expt),
+            "ctrl_files":  ";".join(args.ctrl),
+            "targets_file": args.targets or "",
+        }])
+    else:
+        meta_df = load_metadata(Path(args.metadata))
 
     args.outdir.mkdir(parents=True, exist_ok=True)
 
@@ -1121,15 +1154,17 @@ def main():
 
     model_specs = []
 
-    if args.model:
-        # Single model
-        model_path = Path(args.model)
+    if args.model or (not args.loo_dir and not args.models):
+        # Single model — fall back to bundled SMARTIE.pkl when no --model given
+        model_path = Path(args.model) if args.model else get_bundled_model_path()
+        if not args.model:
+            print(f"  No --model specified; using bundled SMARTIE model: {model_path}")
         config = {}
         config_path = model_path.parent / "model_config.json"
         if config_path.exists():
             with open(config_path) as f:
                 config = json.load(f)
-        label = args.train_label or config.get("train_label", model_path.parent.name)
+        label = args.train_label or config.get("train_label", model_path.stem)
         model_specs.append((model_path, label, None, config))
 
     elif args.loo_dir:

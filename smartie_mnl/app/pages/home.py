@@ -118,5 +118,5 @@ def show():
     st.markdown("---")
     st.markdown(
         "Questions? See the full documentation in the "
-        "[README on GitHub](https://github.com/your-lab/smartie#readme)."
+        "[README on GitHub](https://github.com/toolsmnl/SMARTIE#readme)."
     )

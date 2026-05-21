@@ -30,10 +30,11 @@ from utils import (
     load_pipeline_modules,
     min_edit_pct_slider,
     min_reads_slider,
+    output_workspace,
+    savefig,
     save_uploads,
     save_single_upload,
     show_plots_in_dir,
-    temp_workspace,
 )
 
 
@@ -113,6 +114,7 @@ def show():
             editing_type=editing_type,
             min_reads=min_reads,
             min_edit_pct=min_edit_pct,
+            out_dir_setting=st.session_state.get("output_dir") or None,
         )
 
 
@@ -245,8 +247,9 @@ def _run_cross_test(
     fe, tm, cd,
     model_file, datasets,
     editing_type, min_reads, min_edit_pct,
+    out_dir_setting=None,
 ):
-    with temp_workspace() as workspace:
+    with output_workspace(out_dir_setting) as workspace:
         data_dir = workspace / "data"
         out_dir  = workspace / "outputs"
         data_dir.mkdir(); out_dir.mkdir()
@@ -517,7 +520,7 @@ def _epar_heatmap(results_df, targets_set: set, plots_dir: Path):
                 fontsize=8, color="gray", transform=ax.get_yaxis_transform())
 
     fig.tight_layout()
-    fig.savefig(plots_dir / "epar_heatmap.png", dpi=180, bbox_inches="tight")
+    savefig(fig, plots_dir / "epar_heatmap")
     plt.close(fig)
     df_heat.to_csv(plots_dir / "epar_values.tsv", sep="\t")
 
@@ -564,7 +567,7 @@ def _venn(results_df, targets_set: set, plots_dir: Path, venn_cutoff: int):
         fontsize=12, fontweight="bold",
     )
     fig.tight_layout()
-    fig.savefig(plots_dir / "venn_diagram.png", dpi=180, bbox_inches="tight")
+    savefig(fig, plots_dir / "venn_diagram")
     plt.close(fig)
 
 
@@ -594,7 +597,7 @@ def _score_distribution(results_df, plots_dir: Path):
     ax.set_title("SMARTIE Score Distribution", fontsize=13, fontweight="bold")
     ax.legend(fontsize=9)
     fig.tight_layout()
-    fig.savefig(plots_dir / "score_distribution.png", dpi=180, bbox_inches="tight")
+    savefig(fig, plots_dir / "score_distribution")
     plt.close(fig)
 
 
@@ -646,6 +649,6 @@ def _make_comparison_plots(all_results: dict, out_dir: Path):
     ax.tick_params(axis="y", rotation=0)
 
     fig.tight_layout()
-    fig.savefig(comp_dir / "epar_comparison_heatmap.png", dpi=180, bbox_inches="tight")
+    savefig(fig, comp_dir / "epar_comparison_heatmap")
     plt.close(fig)
     df_heat.to_csv(comp_dir / "epar_comparison_data.tsv", sep="\t")

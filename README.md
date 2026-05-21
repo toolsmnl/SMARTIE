@@ -78,7 +78,7 @@ NUDT21
 
 SMARTIE runs on **Linux, macOS, and Windows** under **Python 3.10 or newer**.
 
-Dependencies are installed automatically by `pip`. (see [Section 2](#2-installation-and-prediction-with-the-smartie-application)). In case of an error where dependencies need to be installed manually, a `requirements.txt` file bundled with the package:
+Dependencies are installed automatically by `pip`. (see [Section 2](#2-installation-and-prediction-with-the-smartie-application)). In case of an error where dependencies need to be installed manually, a `requirements.txt` is available in the [GitHub repository](https://github.com/toolsmnl/SMARTIE/blob/main/requirements.txt). Download it and run:
 
 ```bash
 pip install -r requirements.txt
@@ -152,7 +152,7 @@ The pretrained model is applied automatically; no model file needs to be supplie
 
 ### Tutorial: try it with the example data
 
-The repository includes a small example dataset using Ataxin-2 experiment ([Singh et al, 2021](https://elifesciences.org/articles/60326)) and control files ([Koppaka et al, 2024](https://wellcomeopenresearch.org/articles/10-112)) in ['Tutorial/'](https://github.com/toolsmnl/SMARTIE/tree/9519921742eba66c2d4fe1ea789357a467cade01/Tutorial) folder as 'Example_data.7z'. It can be used to verify that the installation is working and to see what a complete SMARTIE run looks like before applying it to a real experiment. The files are:
+The repository includes a small example dataset using Ataxin-2 experiment ([Singh et al, 2021](https://elifesciences.org/articles/60326)) and control files ([Koppaka et al, 2024](https://wellcomeopenresearch.org/articles/10-112)) in the ['Tutorial/'](https://github.com/toolsmnl/SMARTIE/tree/main/Tutorial) folder as `Example_Data.7z`. It can be used to verify that the installation is working and to see what a complete SMARTIE run looks like before applying it to a real experiment. The files are:
 
 | File                                  | Role                                  |
 | ------------------------------------- | ------------------------------------- |
@@ -160,7 +160,7 @@ The repository includes a small example dataset using Ataxin-2 experiment ([Sing
 | `Ctrl_1.txt`, `Ctrl_2.txt`            | Control replicates                    |
 | `Targets.csv`                         | Known target genes (for evaluation)   |
 
-If you installed SMARTIE via `pip` without cloning the repository, download the example dataset as (['example_data.7z'](https://github.com/toolsmnl/SMARTIE/blob/23540c2c36e2557d3ee127c177a0feb206aacf7a/Example_Data.7z)) of the GitHub repository.
+If you installed SMARTIE via `pip` without cloning the repository, download the example dataset ([`Example_Data.7z`](https://github.com/toolsmnl/SMARTIE/blob/main/Tutorial/Example_Data.7z)) from the GitHub repository.
 
 To run the example end-to-end:
 
@@ -171,14 +171,14 @@ To run the example end-to-end:
 5. Click **Run** and wait for the progress log to finish.
 6. The browser displays the ranked predictions, the EPAR heatmap, and the Venn diagram. Use **Download** to export everything as `smartie_predictions.zip`.
 
-The ['Tutorial/'](https://github.com/toolsmnl/SMARTIE/tree/9519921742eba66c2d4fe1ea789357a467cade01/Tutorial) folder also contains the expected outputs for the run as 'smartie-predictions.zip'. If the run completes and the plots appear without errors, the installation is working correctly. The same dataset is used in the [command-line tutorial](#tutorial-run-the-example-data-from-the-command-line), and the two outputs should be identical.
+The ['Tutorial/'](https://github.com/toolsmnl/SMARTIE/tree/main/Tutorial) folder also contains the expected outputs for the run as `smartie_predictions.zip`. If the run completes and the plots appear without errors, the installation is working correctly. The same dataset is used in the [command-line tutorial](#tutorial-run-the-example-data-from-the-command-line), and the two outputs should be identical.
 
 ---
 
 ## 3. Output directory layout
 
 - **Command-line interface.** Results are written directly to the directory specified by `--outdir`. If the directory does not exist, it is created.
-- **SMARTIE application.** Results are displayed in the browser and made available through the **Download** button as a single ZIP archive (`smartie_predictions.zip`). The archive contains the same files described below.
+- **SMARTIE application.** By default, results are available through the **Download** button as a single ZIP archive. To save results directly to disk instead, set an **Output directory** in the sidebar: choose a base folder with the browse button (📂) and enter a subfolder name — files are written there as PDF + PNG without needing to download a ZIP.
 
 **The plots produced depend on whether a known-targets file was supplied.** When known targets are provided, SMARTIE generates the evaluation plots (EPAR heatmap and Venn diagram); when they are not, it generates a score-distribution plot instead. See [Section 3.3](#33-the-plots) for details.
 
@@ -242,10 +242,10 @@ results/
 │   └── plots/
 │       └── ...
 └── comparison/
-    └── multi_rbp_epar_heatmap.{pdf,png}    # generated when ≥2 datasets have known targets
+    └── epar_comparison_heatmap.{pdf,png}    # generated when ≥2 datasets have known targets
 ```
 
-The `comparison/` folder is produced only when at least two datasets have an associated known-targets file; the `multi_rbp_epar_heatmap` places those datasets on a single heatmap (one row per dataset) for direct comparison.
+The `comparison/` folder is produced only when at least two datasets have an associated known-targets file; the `epar_comparison_heatmap` places those datasets on a single heatmap (one row per dataset) for direct comparison.
 
 > Evaluating several *models* across datasets, rather than several datasets with one model, is a separate workflow described in [`docs/ADVANCED.md`](docs/ADVANCED.md).
 
@@ -271,7 +271,7 @@ Each plot is saved both as **`.pdf`** (for manuscript figures) and **`.png`** (f
 | `epar_heatmap`           | A known-targets file is provided        | Enrichment-Precision-At-Rank heatmap. The known-target list is partitioned into deciles (10%-100%); for each decile, an equivalent number of top-ranked SMARTIE predictions is intersected with the full target list, and the percentage overlap is shown. Each cell is annotated with the number of predictions (`n=`) used at that decile. |
 | `venn_diagram`           | A known-targets file is provided        | Overlap between the top SMARTIE predictions and the full known-target list, with the percentage overlap reported in the title.                                    |
 | `score_distribution`     | No known-targets file is provided       | Histogram of `rf_probability` across all genes, coloured by confidence band, with the number of high-confidence genes annotated.                                  |
-| `multi_rbp_epar_heatmap` | Multi-dataset run, ≥2 datasets with targets | The EPAR heatmap extended across datasets, with one row per dataset (RBP) and deciles as columns. Written to the `comparison/` folder.                               |
+| `epar_comparison_heatmap` | Multi-dataset run, ≥2 datasets with targets | The EPAR heatmap extended across datasets, with one row per dataset (RBP) and deciles as columns. Written to the `comparison/` folder.                               |
 
 The raw values behind the EPAR heatmap are also written as `epar_values.tsv`, allowing the figure to be reproduced or re-plotted independently.
 
@@ -314,7 +314,7 @@ MyRBP_B  data/MyRBP_B_rep1.txt;data/MyRBP_B_rep2.txt     data/Ctrl_B_rep1.txt;da
 | `label`            | Yes      | Short dataset name, used in output paths and plot labels.                         |
 | `expt_files`       | Yes      | Semicolon-separated paths to experiment replicate files.                          |
 | `ctrl_files`       | Yes      | Semicolon-separated paths to control replicate files.                             |
-| `targets_file`     | Yes      | Plain-text file of known target genes, one per line. A placeholder may be used if none are available. |
+| `targets_file`     | No       | Plain-text file of known target genes, one per line. Omit or leave blank if none are available; precision and ROC metrics will be skipped for that dataset. |
 
 Replicate files within a single cell are separated by semicolons. 
 
@@ -330,13 +330,13 @@ The bundled `SMARTIE.pkl` model is located automatically.
 
 ### Tutorial: run the example data from the command line
 
-The same example dataset used in the [GUI tutorial](#tutorial-try-it-with-the-example-data) can be run from the command line. The files (`RBP_Exp_1.txt`, `RBP_Exp_2.txt`, `Ctrl_1.txt`, `Ctrl_2.txt`, `Targets.csv`) are in the `example_data.7z` file present in the 'Tutorial' folder.
+The same example dataset used in the [GUI tutorial](#tutorial-try-it-with-the-example-data) can be run from the command line. The files (`RBP_Exp_1.txt`, `RBP_Exp_2.txt`, `Ctrl_1.txt`, `Ctrl_2.txt`, `Targets.csv`) are in `Example_Data.7z` in the ['Tutorial/'](https://github.com/toolsmnl/SMARTIE/tree/main/Tutorial) folder. Extract the archive so the files sit in a local `Example_Data/` directory.
 
-1. From the repository root, create a metadata TSV pointing at the example files. Save it as `example_data/metadata.tsv`:
+1. From the repository root, create a metadata TSV pointing at the example files. Save it as `Example_Data/metadata.tsv`:
 
 ```
-label        expt_files                                              ctrl_files                                          targets_file
-Example_RBP  example_data/RBP_Exp_1.txt;example_data/RBP_Exp_2.txt   example_data/Ctrl_1.txt;example_data/Ctrl_2.txt     example_data/Targets.csv
+label        expt_files                                                    ctrl_files                                              targets_file
+Example_RBP  Example_Data/RBP_Exp_1.txt;Example_Data/RBP_Exp_2.txt   Example_Data/Ctrl_1.txt;Example_Data/Ctrl_2.txt     Example_Data/Targets.csv
 ```
 
 The columns are separated by tabs and the replicate files within each cell by semicolons.
@@ -345,7 +345,7 @@ The columns are separated by tabs and the replicate files within each cell by se
 
 ```bash
 smartie-test \
-    --metadata example_data/metadata.tsv \
+    --metadata Example_Data/metadata.tsv \
     --outdir   results/example/
 ```
 
