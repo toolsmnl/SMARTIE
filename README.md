@@ -33,10 +33,10 @@ Training a custom model, exhaustive feature selection, and troubleshooting are d
 
 ### 1.1 Input Files
 
-For running SMARTIE, Input files in a **tab-separated text file (.tsv/.txt)** are required. A representative example is shown below (Expand it and scroll horizontally to view all columns.)
+For running SMARTIE, Input files in a **tab-separated text file (.tsv/.txt)** are required. A representative example is shown below.
 
 <details>
-<summary><b>Show a full raw file example</b> (scroll horizontally to see all columns)</summary>
+<summary><b>Raw file example</b> (scroll horizontally to see all columns)</summary>
 
 <br>
 
@@ -46,7 +46,7 @@ chrY   1438171     Su(Ste):CR42410  INTRON  0        0        0        1        
 chr2R  9840430     CG1665           EXON    15       0        0        1        16           31                  0                   0                   0                   31                      1               16           0                          31
 chr2R  17975371    dpr13            EXON    0        14       22       0        36           0                   58                  0                   0                   58                      22              36           0                          58
 chr2R  17975979    dpr13            EXON    0        0        22       0        22           0                   54                  0                   0                   54                      22              22           0                          54
-chr2R  17976517    dpr13            EXON    0        31       1        0        32           0                   37                  0                   0                   37                      1               32           0                          37rom
+chr2R  17976517    dpr13            EXON    0        31       1        0        32           0                   37                  0                   0                   37                      1               32           0                          37
 chr2R  17977621    dpr13            EXON    0        18       12       0        30           0                   38                  0                   0                   38                      12              30           0                          38
 ```
 
@@ -57,15 +57,15 @@ The following column names are accepted for each required quantity :
 | Column      | Accepted names                                                          |
 | ----------- | ----------------------------------------------------------------------- |
 | Gene name   | `Name`, `name`, `Gene`, `gene`, `gene_id`, `Gene_id`                    |
-| Edit count  | `Editbase_count`, `editbase_count`, `G_count`, `g_count` (A-to-G)       |
-|             | `T_count`, `t_count` (C-to-T)                                           |
+| Edit count(A-to-G)  | `Editbase_count`, `editbase_count`,`G_count`, `g_count`        |
+| Edit count(C-to-T)      | `Editbase_count`, `editbase_count`, `T_count`, `t_count`                                            |
 | Total count | `Total_count`, `total_count`, `Total_count.1`                           |
 
 Each experimental and control replicate has to be provided as a separate file. For example:
 - **Experiment replicates**: RBP-Exp-1 and RBP-Exp-2.
 - **Control replicates**: Ctrl-1 and Ctrl-2.
 
-Optionally, A **targets file** (if available) can be provided to validate the list of targets in a plain-text format listing known target gene names, one per line:
+Optionally, A **Gene List (Labelled as Targets file)** (if available) can be provided to compare against the SMARTIE ranked predictions. The list is expected to be in a plain-text format with one gene per row:
 
 ```
 DDX3X
@@ -78,13 +78,11 @@ NUDT21
 
 SMARTIE runs on **Linux, macOS, and Windows** under **Python 3.10 or newer**.
 
-Dependencies are installed automatically by `pip`. (see [Section 2](#2-installation-and-prediction-with-the-smartie-application)). In case of an error where dependencies need to be installed manually, a `requirements.txt` is available in the [GitHub repository](https://github.com/toolsmnl/SMARTIE/blob/main/requirements.txt). Download it and run:
+Dependencies are installed automatically by `pip`. (see [Section 2](#2-installation-and-prediction-with-the-smartie-application)). In case of an error where dependencies need to be installed manually, a `requirements.txt` is available in the [GitHub repository](https://github.com/toolsmnl/SMARTIE/blob/main/requirements.txt). Download and run the command below:
 
 ```bash
 pip install -r requirements.txt
 ```
-
----rom
 
 ## 2. Installation and prediction with the SMARTIE application
 
@@ -98,21 +96,20 @@ In a terminal (Terminal on macOS/Linux, or Command Prompt / PowerShell on Window
 pip install git+https://github.com/toolsmnl/SMARTIE.git
 ```
 
-This installs SMARTIE, resolves all dependencies automatically, and bundles the pretrained `SMARTIE.pkl` model. Installation is required only once.
+This installs SMARTIE and its dependencies, along with the pretrained `SMARTIE.pkl` model.
 
 For users new to Python, `pipx` is recommended, as it installs SMARTIE within an isolated environment:
 
 ```bash
 # macOS
 brew install pipx
-
-# Ubuntu / Debian
-sudo apt install pipx
-
-# Then, on any operating system:
 pipx install git+https://github.com/toolsmnl/SMARTIE.git
 ```
-
+```bash
+# Ubuntu / Debian
+sudo apt install pipx
+pipx install git+https://github.com/toolsmnl/SMARTIE.git
+```
 ### Step 2: Launch the application
 
 In the terminal, run:
@@ -135,7 +132,7 @@ The application provides the following pages, accessible from the sidebar:
 | Page                      | Function                                                                                       |
 | ------------------------- | ---------------------------------------------------------------------------------------------- |
 | **Home**                  | Overview, input-format reference, and orientation.                                            |
-| **Predict Targets**       | Upload editing-site files to obtain a ranked gene list and accompanying plots.                 |
+| **Predict Targets**       | Upload raw edit files obtained from TRIBE/STAMP analysis to get a ranked gene list and accompanying plots.                 |
 | **Train Your Model**      | Upload data and known targets to train a custom model (see [`docs/ADVANCED.md`](docs/ADVANCED.md)). |
 | **Cross-Dataset Testing** | Evaluate a model across several datasets simultaneously.                                       |
 
@@ -152,13 +149,13 @@ The pretrained model is applied automatically; no model file needs to be supplie
 
 ### Tutorial: try it with the example data
 
-The repository includes a small example dataset using Ataxin-2 experiment ([Singh et al, 2021](https://elifesciences.org/articles/60326)) and control files ([Koppaka et al, 2024](https://wellcomeopenresearch.org/articles/10-112)) in the ['Tutorial/'](https://github.com/toolsmnl/SMARTIE/tree/main/Tutorial) folder as `Example_Data.7z`. It can be used to verify that the installation is working and to see what a complete SMARTIE run looks like before applying it to a real experiment. The files are:
+The repository includes an example dataset using Ataxin-2 experiment and control files ([Singh et al, 2021](https://elifesciences.org/articles/60326)) in the ['Tutorial/'](https://github.com/toolsmnl/SMARTIE/tree/main/Tutorial) folder as `Example_Data.7z`. It can be used to verify that the installation and working of SMARTIE. The files are:
 
 | File                                  | Role                                  |
 | ------------------------------------- | ------------------------------------- |
-| `RBP_Exp_1.txt`, `RBP_Exp_2.txt`      | Experiment replicates                 |
+| `RBP_Exp_1.txt`, `RBP_Exp_2.txt`      | Experimental replicates                 |
 | `Ctrl_1.txt`, `Ctrl_2.txt`            | Control replicates                    |
-| `Targets.csv`                         | Known target genes (for evaluation)   |
+| `Targets.csv`                         | Known target genes list of Ataxin-2 (for evaluation)   |
 
 If you installed SMARTIE via `pip` without cloning the repository, download the example dataset ([`Example_Data.7z`](https://github.com/toolsmnl/SMARTIE/blob/main/Tutorial/Example_Data.7z)) from the GitHub repository.
 
@@ -169,15 +166,15 @@ To run the example end-to-end:
 3. Under **Control replicates**, upload `Ctrl_1.txt` and `Ctrl_2.txt`.
 4. Under **Targets file**, upload `Targets.csv`.
 5. Click **Run** and wait for the progress log to finish.
-6. The browser displays the ranked predictions, the EPAR heatmap, and the Venn diagram. Use **Download** to export everything as `smartie_predictions.zip`.
+6. The browser displays the ranked predictions, the EPAR heatmap, and the Venn diagram. Use **Download** to export your results.
 
-The ['Tutorial/'](https://github.com/toolsmnl/SMARTIE/tree/main/Tutorial) folder also contains the expected outputs for the run as `smartie_predictions.zip`. If the run completes and the plots appear without errors, the installation is working correctly. The same dataset is used in the [command-line tutorial](#tutorial-run-the-example-data-from-the-command-line), and the two outputs should be identical.
+The ['Tutorial/'](https://github.com/toolsmnl/SMARTIE/tree/main/Tutorial) folder also contains the expected outputs for the run as `smartie_predictions.zip`. If the run completes and the plots appear without errors, the installation is working correctly. The same dataset is used in the [command-line tutorial](#tutorial-run-the-example-data-from-the-command-line), and the outputs should be identical.
 
 ---
 
 ## 3. Output directory layout
 
-- **Command-line interface.** Results are written directly to the directory specified by `--outdir`. If the directory does not exist, it is created.
+- **Command-line interface.** Results are written directly to the directory specified by `--outdir`. If the directory does not pre-exist, it is created.
 - **SMARTIE application.** By default, results are available through the **Download** button as a single ZIP archive. To save results directly to disk instead, set an **Output directory** in the sidebar: choose a base folder with the browse button and enter a subfolder name.
 
 **The plots produced depend on whether a known-targets file was supplied.** When known targets are provided, SMARTIE generates the evaluation plots (EPAR heatmap and Venn diagram); when they are not, it generates a score-distribution plot instead. See [Section 3.3](#33-the-plots) for details.
@@ -268,7 +265,7 @@ Each plot is saved both as **`.pdf`** (for manuscript figures) and **`.png`** (f
 
 | Plot                     | When produced                          | Description                                                                                                                                                       |
 | ------------------------ | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `epar_heatmap`           | A known-targets file is provided        | Enrichment-Precision-At-Rank heatmap. The known-target list is partitioned into deciles (10%-100%); for each decile, an equivalent number of top-ranked SMARTIE predictions is intersected with the full target list, and the percentage overlap is shown. Each cell is annotated with the number of predictions (`n=`) used at that decile. |
+| `epar_heatmap`           | A known-targets file is provided        | Equivalent-Precision-Against-Reference heatmap. Detailed information about this parameter is provided in [*Koppaka et al,Biorxiv, 2026*](https://www.biorxiv.org/content/10.64898/2026.05.18.726004v1))|
 | `venn_diagram`           | A known-targets file is provided        | Overlap between the top SMARTIE predictions and the full known-target list, with the percentage overlap reported in the title.                                    |
 | `score_distribution`     | No known-targets file is provided       | Histogram of `rf_probability` across all genes, coloured by confidence band, with the number of high-confidence genes annotated.                                  |
 | `epar_comparison_heatmap` | Multi-dataset run, ≥2 datasets with targets | The EPAR heatmap extended across datasets, with one row per dataset (RBP) and deciles as columns. Written to the `comparison/` folder.                               |
