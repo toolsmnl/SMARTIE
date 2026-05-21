@@ -110,6 +110,14 @@ pipx install git+https://github.com/toolsmnl/SMARTIE.git
 sudo apt install pipx
 pipx install git+https://github.com/toolsmnl/SMARTIE.git
 ```
+To uninstall and reinstall SMARTIE in case of any error use:
+```bash
+pip uninstall smartie-mnl -y
+pip install .
+SMARTIE
+```
+
+
 ### Step 2: Launch the application
 
 In the terminal, run:
@@ -377,7 +385,9 @@ The complete list of options is available via `smartie-test --help`. The output 
 
 ## Advanced usage
 
-Instructions for training a custom model, performing exhaustive feature selection, and resolving common issues are provided in [`docs/ADVANCED.md`](docs/ADVANCED.md). The pretrained model documented in Parts 1 and 2 is sufficient for most analyses.
+Instructions for training a custom model, performing exhaustive feature selection, and resolving common issues are provided in [`docs/ADVANCED.md`](docs/ADVANCED.md). The pretrained model documented in Parts 1 and 2 is sufficient for most analyses. 
+
+
 
 ## Citation
 
