@@ -415,7 +415,7 @@ def _predict_one_dataset(
 
     metrics = {}
     if targets_path:
-        from train_model import load_targets
+        from smartie_mnl.train_model import load_targets
         targets_set = load_targets(str(targets_path))
         results_df["is_known_target"] = results_df["gene"].str.lower().isin(targets_set).astype(int)
         y_true  = results_df["is_known_target"].values
@@ -441,7 +441,7 @@ def _predict_one_dataset_from_row(
     out_dir: Path,
 ) -> dict | None:
     """Same as _predict_one_dataset but reads file paths from a metadata row."""
-    from train_model import parse_files as _parse_files
+    from smartie_mnl.train_model import parse_files as _parse_files
 
     expt_paths = [Path(p) for p in _parse_files(str(row["expt_files"]))]
     ctrl_paths = [Path(p) for p in _parse_files(str(row["ctrl_files"]))]
