@@ -171,7 +171,7 @@ To run the example end-to-end:
 5. Click **Run** and wait for the progress log to finish.
 6. The browser displays the ranked predictions, the EPAR heatmap, and the Venn diagram. Use **Download** to export everything as `smartie_predictions.zip`.
 
-The ['Tutorial/'](https://github.com/toolsmnl/SMARTIE/tree/9519921742eba66c2d4fe1ea789357a467cade01/Tutorial) folder also contains the expected outputs for the run as 'smartie-predictions.7z'. If the run completes and the plots appear without errors, the installation is working correctly. The same dataset is used in the [command-line tutorial](#tutorial-run-the-example-data-from-the-command-line), and the two outputs should be identical.
+The ['Tutorial/'](https://github.com/toolsmnl/SMARTIE/tree/9519921742eba66c2d4fe1ea789357a467cade01/Tutorial) folder also contains the expected outputs for the run as 'smartie-predictions.zip'. If the run completes and the plots appear without errors, the installation is working correctly. The same dataset is used in the [command-line tutorial](#tutorial-run-the-example-data-from-the-command-line), and the two outputs should be identical.
 
 ---
 
