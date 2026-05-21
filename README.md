@@ -46,7 +46,7 @@ chrY   1438171     Su(Ste):CR42410  INTRON  0        0        0        1        
 chr2R  9840430     CG1665           EXON    15       0        0        1        16           31                  0                   0                   0                   31                      1               16           0                          31
 chr2R  17975371    dpr13            EXON    0        14       22       0        36           0                   58                  0                   0                   58                      22              36           0                          58
 chr2R  17975979    dpr13            EXON    0        0        22       0        22           0                   54                  0                   0                   54                      22              22           0                          54
-chr2R  17976517    dpr13            EXON    0        31       1        0        32           0                   37                  0                   0                   37                      1               32           0                          37
+chr2R  17976517    dpr13            EXON    0        31       1        0        32           0                   37                  0                   0                   37                      1               32           0                          37rom
 chr2R  17977621    dpr13            EXON    0        18       12       0        30           0                   38                  0                   0                   38                      12              30           0                          38
 ```
 
@@ -84,7 +84,7 @@ Dependencies are installed automatically by `pip`. (see [Section 2](#2-installat
 pip install -r requirements.txt
 ```
 
----
+---rom
 
 ## 2. Installation and prediction with the SMARTIE application
 
@@ -178,7 +178,7 @@ The ['Tutorial/'](https://github.com/toolsmnl/SMARTIE/tree/main/Tutorial) folder
 ## 3. Output directory layout
 
 - **Command-line interface.** Results are written directly to the directory specified by `--outdir`. If the directory does not exist, it is created.
-- **SMARTIE application.** By default, results are available through the **Download** button as a single ZIP archive. To save results directly to disk instead, set an **Output directory** in the sidebar: choose a base folder with the browse button (📂) and enter a subfolder name — files are written there as PDF + PNG without needing to download a ZIP.
+- **SMARTIE application.** By default, results are available through the **Download** button as a single ZIP archive. To save results directly to disk instead, set an **Output directory** in the sidebar: choose a base folder with the browse button and enter a subfolder name.
 
 **The plots produced depend on whether a known-targets file was supplied.** When known targets are provided, SMARTIE generates the evaluation plots (EPAR heatmap and Venn diagram); when they are not, it generates a score-distribution plot instead. See [Section 3.3](#33-the-plots) for details.
 
